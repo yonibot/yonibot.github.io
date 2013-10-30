@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[YONI]]></title>
-  <link href="http://yoursite.com/atom.xml" rel="self"/>
-  <link href="http://yoursite.com/"/>
-  <updated>2013-10-29T15:13:37+02:00</updated>
-  <id>http://yoursite.com/</id>
+  <link href="http://yonibot.github.io/atom.xml" rel="self"/>
+  <link href="http://yonibot.github.io/"/>
+  <updated>2013-10-30T13:53:29+02:00</updated>
+  <id>http://yonibot.github.io/</id>
   <author>
     <name><![CDATA[Yoni]]></name>
     

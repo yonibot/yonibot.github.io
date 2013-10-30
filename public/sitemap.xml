@@ -1,19 +1,19 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>
     <url>
-        <loc>http://yoursite.com/blog/archives/</loc>
+        <loc>http://yonibot.github.io/blog/archives/</loc>
         <lastmod>2013-10-29T15:04:43+02:00</lastmod>
     </url>
     <url>
-        <loc>http://yoursite.com/blog/</loc>
+        <loc>http://yonibot.github.io/blog/</loc>
         <lastmod>2013-10-29T15:04:43+02:00</lastmod>
     </url>
     <url>
-        <loc>http://yoursite.com/</loc>
+        <loc>http://yonibot.github.io/</loc>
         <lastmod>2013-10-29T15:04:44+02:00</lastmod>
     </url>
     <url>
-        <loc>http://yoursite.com/robots.txt</loc>
+        <loc>http://yonibot.github.io/robots.txt</loc>
         <lastmod>2013-10-29T15:04:44+02:00</lastmod>
     </url>
 </urlset>
