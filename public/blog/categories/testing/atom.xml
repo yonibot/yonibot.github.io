@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Testing | YONI]]></title>
+  <link href="http://yonibot.github.io/blog/categories/testing/atom.xml" rel="self"/>
+  <link href="http://yonibot.github.io/"/>
+  <updated>2013-10-30T15:23:37+02:00</updated>
+  <id>http://yonibot.github.io/</id>
+  <author>
+    <name><![CDATA[Yoni]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Testing is not bad at all]]></title>
+    <link href="http://yonibot.github.io/blog/2013/07/05/testing-is-not-bad-at-all/"/>
+    <updated>2013-07-05T15:22:00+03:00</updated>
+    <id>http://yonibot.github.io/blog/2013/07/05/testing-is-not-bad-at-all</id>
+    <content type="html"><![CDATA[<p>Last week I bought the &ldquo;<a href="https://leanpub.com/everydayrailsrspec">Everyday Rails Testing with Rspec</a>&rdquo; book by Aaron Sumner for the third Ruby on Rails course by the TeaLeaf Academy (which, by the way, is a lot of fun!). I expected testing to be a bit of a chore, but it turns out that I&rsquo;m actually enjoying it.</p>
+
+<p>The course introduces testing very gradually, so that in each exercise you just focus on one or two tests. It&rsquo;s basically breaking up a new skill into edible chunks so that you can really focus on each chunk and process it properly until you understand it. Testing presents kind of a fun brain challenge, figuring out exactly which cases you want to test for and how to most accurately test for these cases, and at the same time it gives you a better understanding of what&rsquo;s going on in your own app.</p>
+]]></content>
+  </entry>
+  
+</feed>
