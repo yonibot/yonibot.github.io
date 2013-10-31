@@ -1,125 +1,343 @@
 
-<!DOCTYPE HTML>
-<html lang="en-GB">
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
-	<meta charset="utf-8">
-	<title>writing.deeeet.com  | YONI</title>
+  <meta charset="utf-8">
+  <title>YONI</title>
+  <meta name="author" content="Yoni">
 
-	<meta name="author" content="Yoni">
+  
+  <meta name="description" content="Last week I bought the &ldquo;Everyday Rails Testing with Rspec&rdquo; book by Aaron Sumner for the third Ruby on Rails course by the TeaLeaf Academy &hellip;">
+  
 
-<meta name="description" content="Testing is not bad at all 2013 Jul 5 Rails, Testing find_by versus find in Rails 2013 Jun 10 DB, Rails, SQL Is it pronounced &#8216;S-Q-L&#8217; or &hellip;"> <meta name="keywords" content="">
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-
-	<link href="/atom.xml" rel="alternate" title="YONI" type="application/atom+xml">
-	<link rel="canonical" href="">
-	<link href="/favicon.png" rel="shortcut icon">
-	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
-	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
-	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-	
+  
+  <link rel="canonical" href="http://yoniweisbrod.com">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="YONI" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Fjalla+One' rel='stylesheet' type='text/css'>
+  
 
 </head>
 
-
-
-<body>
-	<header id="header" class="inner"><h1><a href="/">YONI</a></h1>
-<span class="tagline">is working on his Ruby chops</span>
-<!-- <nav id="main-nav"><ul>
-	<li><a href="/about">About</a></li>
-	<li><a href="/archives">Archives</a></li>
-	<li><a href="/contact">Contact</a></li>
-</ul>
-</nav> -->
-<!-- <nav id="mobile-nav"> -->
-<!-- 	<div class="alignleft menu"> -->
-<!-- 		<a class="button">Menu</a> -->
-<!-- 		<div class="container"><ul>
-	<li><a href="/about">About</a></li>
-	<li><a href="/archives">Archives</a></li>
-	<li><a href="/contact">Contact</a></li>
-</ul>
-</div> -->
-<!-- 	</div> -->
-<!-- </nav> -->
-
+<body   class="collapse-sidebar sidebar-footer" >
+  <header role="banner"><hgroup>
+  <h1><a href="/">YONI</a></h1>
+  
+    <h2>is working on his Ruby chops</h2>
+  
+</hgroup>
 
 </header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:yoniweisbrod.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
 
-	<div id="content" class="inner">
-	
-<article>
-	<h3><a href="/blog/2013/07/05/testing-is-not-bad-at-all/">Testing is not bad at all</a></h3>
-	<div class="meta">
-		<span class="date">2013 Jul  5 </span>
-		<span class="tags">
-
-
-	<a class='category' href='/blog/categories/rails/'>Rails</a>, <a class='category' href='/blog/categories/testing/'>Testing</a>
-
-
-</span>
-	</div>
-</article>
-
-
-	
-<article>
-	<h3><a href="/blog/2013/06/10/find-by-versus-find-in-rails/">find_by versus find in Rails</a></h3>
-	<div class="meta">
-		<span class="date">2013 Jun 10 </span>
-		<span class="tags">
-
-
-	<a class='category' href='/blog/categories/db/'>DB</a>, <a class='category' href='/blog/categories/rails/'>Rails</a>, <a class='category' href='/blog/categories/sql/'>SQL</a>
-
-
-</span>
-	</div>
-</article>
-
-
-	
-<article>
-	<h3><a href="/blog/2013/05/19/is-it-pronounced-s-q-l-or-sequel/">Is it pronounced &#8216;S-Q-L&#8217; or &#8216;Sequel&#8217;?</a></h3>
-	<div class="meta">
-		<span class="date">2013 May 19 </span>
-		<span class="tags">
+</nav>
+  <div id="main">
+    <div id="content">
+      <div class="blog-index">
+  
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/07/05/testing-is-not-bad-at-all/">Testing Is Not Bad at All</a></h1>
+    
+    
+      <p class="meta">
+        
 
 
-	<a class='category' href='/blog/categories/db/'>DB</a>, <a class='category' href='/blog/categories/sql/'>SQL</a>
 
 
-</span>
-	</div>
-</article>
 
 
+
+
+  
+
+
+<time datetime="2013-07-05T15:22:00+03:00" pubdate data-updated="true">Jul 5<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Last week I bought the &ldquo;<a href="https://leanpub.com/everydayrailsrspec">Everyday Rails Testing with Rspec</a>&rdquo; book by Aaron Sumner for the third Ruby on Rails course by the TeaLeaf Academy (which, by the way, is a lot of fun!). I expected testing to be a bit of a chore, but it turns out that I&rsquo;m actually enjoying it.</p>
+
+<p>The course introduces testing very gradually, so that in each exercise you just focus on one or two tests. It&rsquo;s basically breaking up a new skill into edible chunks so that you can really focus on each chunk and process it properly until you understand it. Testing presents kind of a fun brain challenge, figuring out exactly which cases you want to test for and how to most accurately test for these cases, and at the same time it gives you a better understanding of what&rsquo;s going on in your own app.</p>
 </div>
-	<footer id="footer" class="inner"><br>
-<br>
-<br>
-<br>
-&copy; 2013
+  
+  
 
-    Yoni
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/06/10/find-by-versus-find-in-rails/">Find_by Versus Find in Rails</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-06-10T15:13:00+03:00" pubdate data-updated="true">Jun 10<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><em>Edit: This article is a bit dated, since Rails 3 prefers the <strong>where</strong> method to the <strong>find </strong>method.</em></p>
+
+<p>Rails has a number of distinct ways to find ActiveRecord objects by id. They are:</p>
+
+<p>Object<strong>.find(id)</strong></p>
+
+<p>Object<strong>.find_by_id(id)</strong></p>
+
+<p>Object<strong>.find_all_by_id(id)</strong></p>
+
+<p>How do you know which one to use? Does it matter?</p>
+
+<p>I found that all 3 methods have their own unique properties, and can be used when you&rsquo;re looking for specific types of results. The differences can be expressed as follows:</p>
+
+<ol>
+<li><strong>Returning an ActiveRecord error </strong><strong>or nil - </strong>The basic &lsquo;find&rsquo; method throws an ActiveRecord::RecordNotFound error if you input an id that does not correspond to object. The other two methods return nil.</li>
+</ol>
+
+
+<p>2. <strong>Whether multiple objects can be returned</strong> &ndash; The &lsquo;find_by&rsquo; syntax only returns a single object. In contrast, the &lsquo;find&rsquo; and &lsquo;find_all_by_&rsquo; can return multiple objects. If you input multiple id&rsquo;s into a find_by method, it will simply return the first result.<strong>
+</strong></p>
+
+<p>3. <strong>Whether objects are always returned as an array &ndash;</strong> For the &lsquo;find_all_by&rsquo; method, the value is always returned in an array &ndash; even if the result is a single object.</p>
+
+<p>In summary:</p>
+
+<table style="background-color:#ffffcc;" width="100%" border="1" cellspacing="1" cellpadding="3">
+<tbody>
+<tr>
+<td><span style="text-decoration:underline;">Method</span> / <span style="text-decoration:underline;">Result</span></td>
+<td style="text-align:center;">**Error or Nil?**</td>
+<td style="text-align:center;">**Number of Objects it can Return**</td>
+<td style="text-align:center;">**Always returns an array?**</td>
+</tr>
+<tr>
+<td>**.find**</td>
+<td>ActiveRecord error</td>
+<td>Multiple</td>
+<td>No</td>
+</tr>
+<tr>
+<td>**.find_by**_</td>
+<td>nil</td>
+<td>Single</td>
+<td>No</td>
+</tr>
+<tr>
+<td>**.find_all_by_**</td>
+<td>nil</td>
+<td>Multiple</td>
+<td>Yes, even for a single object.</td>
+</tr>
+</tbody>
+</table>
+
+
+<p><a href="http://www.quackit.com/html/html_table_tutorial.cfm"> </a></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/05/19/is-it-pronounced-s-q-l-or-sequel/">Is It Pronounced &#8216;S-Q-L&#8217; or &#8216;Sequel&#8217;?</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-05-19T15:09:00+03:00" pubdate data-updated="true">May 19<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>There&rsquo;s really no definitive answer to this one. But the next time someone challenges your pronunciation of &lsquo;SQL&rsquo;, you can at least back up your choice with some cold hard facts.</p>
+
+<p>The SQL database standard was invented in the early 70s and was originally called &lsquo;SEQUEL&rsquo; &ndash; an acronym for Structured English Query Language. As a result of an IP dispute with british Aircraft manufacturer Hawker Siddeley, the name was shortened to SQL &ndash; Structured Query Language. Despite the change, many people continued to use the old name &lsquo;Sequel&rsquo;, according to an e-mail from one of the two inventors of the standard <a href="http://patorjk.com/blog/2012/01/26/pronouncing-sql-s-q-l-or-sequel/">obtained by this intrepid blogger</a>. Still, the inventor suggests that the &lsquo;official&rsquo; pronunciation is probably &rsquo;S-Q-L&#8217;, as it is spelled in the ISO Standard.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  <div class="pagination">
+    
+    <a href="/blog/archives">Blog Archives</a>
+    
+  </div>
+</div>
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/07/05/testing-is-not-bad-at-all/">Testing is not bad at all</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/06/10/find-by-versus-find-in-rails/">find_by versus find in Rails</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/05/19/is-it-pronounced-s-q-l-or-sequel/">Is it pronounced &#8216;S-Q-L&#8217; or &#8216;Sequel&#8217;?</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating&#8230;</li>
+  </ul>
+  
+  <a href="https://github.com/yonibot">@yonibot</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'yonibot',
+            count: 0,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+
+  
+</aside>
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Yoni -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
 
 </footer>
-	<script src="/javascripts/slash.js"></script>
-<script src="/javascripts/hyphenator.js"></script>
+  
 
 
+
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
 
 
 
 
 
 </body>
-<script>
-  $(document).ready(function() {
-  // Make images center
-  $('p:has(img)').css('text-align', 'center');
-  });
-</script>
 </html>
