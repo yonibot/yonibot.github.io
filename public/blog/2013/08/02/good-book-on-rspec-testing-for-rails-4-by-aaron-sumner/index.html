@@ -5,11 +5,12 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>find_by versus find in Rails - Yoni Weisbrod</title>
+  <title>Good book on Rspec Testing for Rails 4 by Aaron Sumner - Yoni Weisbrod</title>
   <meta name="author" content="Yoni">
 
   
-  <meta name="description" content="Edit: This article is a bit dated, since Rails 3 prefers the where method to the find method. Rails has a number of distinct ways to find &hellip;">
+  <meta name="description" content="Hot off the press! Aaron Sumner&rsquo;s excellent book on Rspec for Rails has
+been updated for Rails 4 as of today, and includes up to date material &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +19,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://yoniweisbrod.com/blog/2013/06/10/find-by-versus-find-in-rails/">
+  <link rel="canonical" href="http://yoniweisbrod.com/blog/2013/08/02/good-book-on-rspec-testing-for-rails-4-by-aaron-sumner/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -76,7 +77,7 @@
   <header>
     
       
-        <h1 class="entry-title">Find_by Versus Find in Rails</h1>
+        <h1 class="entry-title">Good Book on Rspec Testing for Rails 4 by Aaron Sumner</h1>
       
     
     
@@ -93,70 +94,17 @@
   
 
 
-<time datetime="2013-06-10T15:13:00+03:00" pubdate data-updated="true">Jun 10<span>th</span>, 2013</time>
+<time datetime="2013-08-02T17:10:00+03:00" pubdate data-updated="true">Aug 2<span>nd</span>, 2013</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p><em>Edit: This article is a bit dated, since Rails 3 prefers the <strong>where</strong> method to the <strong>find </strong>method.</em></p>
-
-<p>Rails has a number of distinct ways to find ActiveRecord objects by id. They are:</p>
-
-<p>Object<strong>.find(id)</strong></p>
-
-<p>Object<strong>.find_by_id(id)</strong></p>
-
-<p>Object<strong>.find_all_by_id(id)</strong></p>
-
-<p>How do you know which one to use? Does it matter?</p>
-
-<p>I found that all 3 methods have their own unique properties, and can be used when you&rsquo;re looking for specific types of results. The differences can be expressed as follows:</p>
-
-<ol>
-<li><strong>Returning an ActiveRecord error </strong><strong>or nil - </strong>The basic &lsquo;find&rsquo; method throws an ActiveRecord::RecordNotFound error if you input an id that does not correspond to object. The other two methods return nil.</li>
-</ol>
-
-
-<p>2. <strong>Whether multiple objects can be returned</strong> &ndash; The &lsquo;find_by&rsquo; syntax only returns a single object. In contrast, the &lsquo;find&rsquo; and &lsquo;find_all_by_&rsquo; can return multiple objects. If you input multiple id&rsquo;s into a find_by method, it will simply return the first result.<strong>
-</strong></p>
-
-<p>3. <strong>Whether objects are always returned as an array &ndash;</strong> For the &lsquo;find_all_by&rsquo; method, the value is always returned in an array &ndash; even if the result is a single object.</p>
-
-<p>In summary:</p>
-
-<table style="background-color:#ffffcc;" width="100%" border="1" cellspacing="1" cellpadding="3">
-<tbody>
-<tr>
-<td><span style="text-decoration:underline;">Method</span> / <span style="text-decoration:underline;">Result</span></td>
-<td style="text-align:center;">**Error or Nil?**</td>
-<td style="text-align:center;">**Number of Objects it can Return**</td>
-<td style="text-align:center;">**Always returns an array?**</td>
-</tr>
-<tr>
-<td>**.find**</td>
-<td>ActiveRecord error</td>
-<td>Multiple</td>
-<td>No</td>
-</tr>
-<tr>
-<td>**.find_by**_</td>
-<td>nil</td>
-<td>Single</td>
-<td>No</td>
-</tr>
-<tr>
-<td>**.find_all_by_**</td>
-<td>nil</td>
-<td>Multiple</td>
-<td>Yes, even for a single object.</td>
-</tr>
-</tbody>
-</table>
-
-
-<p><a href="http://www.quackit.com/html/html_table_tutorial.cfm"> </a></p>
+<div class="entry-content"><p>Hot off the press! Aaron Sumner&rsquo;s excellent book on Rspec for Rails has
+been updated for Rails 4 as of today, and includes up to date material
+on Capybara, Factorygirl and a number of other technologies. It can be
+downloaded as a pdf, mobi, or epub. <a href="https://leanpub.com/everydayrailsrspec">Check it out here</a>.</p>
 </div>
 
 
@@ -179,21 +127,15 @@
   
 
 
-<time datetime="2013-06-10T15:13:00+03:00" pubdate data-updated="true">Jun 10<span>th</span>, 2013</time>
+<time datetime="2013-08-02T17:10:00+03:00" pubdate data-updated="true">Aug 2<span>nd</span>, 2013</time>
       
-
-<span class="categories">
-  
-    <a class='category' href='/blog/categories/db/'>DB</a>, <a class='category' href='/blog/categories/rails/'>Rails</a>, <a class='category' href='/blog/categories/sql/'>SQL</a>
-  
-</span>
 
 
     </p>
     
       <div class="sharing">
   
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://yoniweisbrod.com/blog/2013/06/10/find-by-versus-find-in-rails/" data-via="twityon" data-counturl="http://yoniweisbrod.com/blog/2013/06/10/find-by-versus-find-in-rails/" >Tweet</a>
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://yoniweisbrod.com/blog/2013/08/02/good-book-on-rspec-testing-for-rails-4-by-aaron-sumner/" data-via="twityon" data-counturl="http://yoniweisbrod.com/blog/2013/08/02/good-book-on-rspec-testing-for-rails-4-by-aaron-sumner/" >Tweet</a>
   
   
   
@@ -204,10 +146,10 @@
     
     <p class="meta">
       
-        <a class="basic-alignment left articlenav" href="/blog/2013/05/19/is-it-pronounced-s-q-l-or-sequel/" title="Previous Post: Is it pronounced 'S-Q-L' or 'Sequel'?">&laquo; Is it pronounced 'S-Q-L' or 'Sequel'?</a>
+        <a class="basic-alignment left articlenav" href="/blog/2013/07/16/installing-redis-on-os-x/" title="Previous Post: Installing Redis on OS X">&laquo; Installing Redis on OS X</a>
       
       
-        <a class="basic-alignment right articlenav" href="/blog/2013/07/02/programming-from-a-cafe-with-github/" title="Next Post: Programming from a Cafe with Github">Programming from a Cafe with Github &raquo;</a>
+        <a class="basic-alignment right articlenav" href="/blog/2013/08/11/namespacing-to-add-new-actors/" title="Next Post: Namespacing to Add New Actors">Namespacing to Add New Actors &raquo;</a>
       
     </p>
   </footer>

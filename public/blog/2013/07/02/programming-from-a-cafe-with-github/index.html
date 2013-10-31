@@ -5,11 +5,12 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>find_by versus find in Rails - Yoni Weisbrod</title>
+  <title>Programming from a Cafe with Github - Yoni Weisbrod</title>
   <meta name="author" content="Yoni">
 
   
-  <meta name="description" content="Edit: This article is a bit dated, since Rails 3 prefers the where method to the find method. Rails has a number of distinct ways to find &hellip;">
+  <meta name="description" content="I do most of my programming from cafes and until today I&rsquo;ve faced a
+major annoyance &ndash; a lot of public wifis are configured to block ssh &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +19,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://yoniweisbrod.com/blog/2013/06/10/find-by-versus-find-in-rails/">
+  <link rel="canonical" href="http://yoniweisbrod.com/blog/2013/07/02/programming-from-a-cafe-with-github/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -76,7 +77,7 @@
   <header>
     
       
-        <h1 class="entry-title">Find_by Versus Find in Rails</h1>
+        <h1 class="entry-title">Programming From a Cafe With Github</h1>
       
     
     
@@ -93,70 +94,34 @@
   
 
 
-<time datetime="2013-06-10T15:13:00+03:00" pubdate data-updated="true">Jun 10<span>th</span>, 2013</time>
+<time datetime="2013-07-02T17:07:00+03:00" pubdate data-updated="true">Jul 2<span>nd</span>, 2013</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p><em>Edit: This article is a bit dated, since Rails 3 prefers the <strong>where</strong> method to the <strong>find </strong>method.</em></p>
-
-<p>Rails has a number of distinct ways to find ActiveRecord objects by id. They are:</p>
-
-<p>Object<strong>.find(id)</strong></p>
-
-<p>Object<strong>.find_by_id(id)</strong></p>
-
-<p>Object<strong>.find_all_by_id(id)</strong></p>
-
-<p>How do you know which one to use? Does it matter?</p>
-
-<p>I found that all 3 methods have their own unique properties, and can be used when you&rsquo;re looking for specific types of results. The differences can be expressed as follows:</p>
-
-<ol>
-<li><strong>Returning an ActiveRecord error </strong><strong>or nil - </strong>The basic &lsquo;find&rsquo; method throws an ActiveRecord::RecordNotFound error if you input an id that does not correspond to object. The other two methods return nil.</li>
-</ol>
-
-
-<p>2. <strong>Whether multiple objects can be returned</strong> &ndash; The &lsquo;find_by&rsquo; syntax only returns a single object. In contrast, the &lsquo;find&rsquo; and &lsquo;find_all_by_&rsquo; can return multiple objects. If you input multiple id&rsquo;s into a find_by method, it will simply return the first result.<strong>
-</strong></p>
-
-<p>3. <strong>Whether objects are always returned as an array &ndash;</strong> For the &lsquo;find_all_by&rsquo; method, the value is always returned in an array &ndash; even if the result is a single object.</p>
-
-<p>In summary:</p>
-
-<table style="background-color:#ffffcc;" width="100%" border="1" cellspacing="1" cellpadding="3">
-<tbody>
-<tr>
-<td><span style="text-decoration:underline;">Method</span> / <span style="text-decoration:underline;">Result</span></td>
-<td style="text-align:center;">**Error or Nil?**</td>
-<td style="text-align:center;">**Number of Objects it can Return**</td>
-<td style="text-align:center;">**Always returns an array?**</td>
-</tr>
-<tr>
-<td>**.find**</td>
-<td>ActiveRecord error</td>
-<td>Multiple</td>
-<td>No</td>
-</tr>
-<tr>
-<td>**.find_by**_</td>
-<td>nil</td>
-<td>Single</td>
-<td>No</td>
-</tr>
-<tr>
-<td>**.find_all_by_**</td>
-<td>nil</td>
-<td>Multiple</td>
-<td>Yes, even for a single object.</td>
-</tr>
-</tbody>
-</table>
-
-
-<p><a href="http://www.quackit.com/html/html_table_tutorial.cfm"> </a></p>
+<div class="entry-content"><p>I do most of my programming from cafes and until today I&rsquo;ve faced a
+major annoyance &ndash; a lot of public wifis are configured to block ssh
+access. Unfortunately this is how I connect with Github, so I haven&rsquo;t
+able to push any code changes while working at the cafes. Today I found
+a fix for this <a href="http://stackoverflow.com/questions/7953806/github-ssh-via-public-wifi-port-22-blocked">on StackOverflow</a>, quoting <a href="https://help.github.com/articles/using-ssh-over-the-https-port">this article from
+Github</a> &ndash; all you need to do is configure your computer to use port
+443 for GitHub access, which is the default HTTPS port and is usually
+not blocked. Essentially you&rsquo;re making an SSH connection over the port
+generally used for HTTPS. 1. Test to see whether you can make SSH
+connections over the HTTPS port. In the terminal, run:
+<code>$ ssh -T -p 443 git@ssh.github.com</code> You should get the following
+response: Hi <em>username</em>! You&rsquo;ve successfully authenticated, but GitHub
+does not provide shell access. 2. Open &lsquo;\~/.ssh/config&rsquo; using your text
+editor (I use Sublime Text 2): <code></code> <code>subl ~/.ssh/config</code> 3. Paste in the
+following: <code>Host github.com Hostname ssh.github.com Port 443</code> 4. Test
+that it works: <code>$ ssh -T git@github.com</code> You should get the following
+response: Hi <em>username</em>! You&rsquo;ve successfully authenticated, but GitHub
+does not provide shell access. And that&rsquo;s it. Now you should be able to
+work with Git in public places. What I am curious about is whether there
+are security issues when doing this, and how to make it work for heroku
+as well. I guess that&rsquo;ll be for a future post.</p>
 </div>
 
 
@@ -179,21 +144,15 @@
   
 
 
-<time datetime="2013-06-10T15:13:00+03:00" pubdate data-updated="true">Jun 10<span>th</span>, 2013</time>
+<time datetime="2013-07-02T17:07:00+03:00" pubdate data-updated="true">Jul 2<span>nd</span>, 2013</time>
       
-
-<span class="categories">
-  
-    <a class='category' href='/blog/categories/db/'>DB</a>, <a class='category' href='/blog/categories/rails/'>Rails</a>, <a class='category' href='/blog/categories/sql/'>SQL</a>
-  
-</span>
 
 
     </p>
     
       <div class="sharing">
   
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://yoniweisbrod.com/blog/2013/06/10/find-by-versus-find-in-rails/" data-via="twityon" data-counturl="http://yoniweisbrod.com/blog/2013/06/10/find-by-versus-find-in-rails/" >Tweet</a>
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://yoniweisbrod.com/blog/2013/07/02/programming-from-a-cafe-with-github/" data-via="twityon" data-counturl="http://yoniweisbrod.com/blog/2013/07/02/programming-from-a-cafe-with-github/" >Tweet</a>
   
   
   
@@ -204,10 +163,10 @@
     
     <p class="meta">
       
-        <a class="basic-alignment left articlenav" href="/blog/2013/05/19/is-it-pronounced-s-q-l-or-sequel/" title="Previous Post: Is it pronounced 'S-Q-L' or 'Sequel'?">&laquo; Is it pronounced 'S-Q-L' or 'Sequel'?</a>
+        <a class="basic-alignment left articlenav" href="/blog/2013/06/10/find-by-versus-find-in-rails/" title="Previous Post: find_by versus find in Rails">&laquo; find_by versus find in Rails</a>
       
       
-        <a class="basic-alignment right articlenav" href="/blog/2013/07/02/programming-from-a-cafe-with-github/" title="Next Post: Programming from a Cafe with Github">Programming from a Cafe with Github &raquo;</a>
+        <a class="basic-alignment right articlenav" href="/blog/2013/07/05/testing-is-not-bad-at-all/" title="Next Post: Testing is not bad at all">Testing is not bad at all &raquo;</a>
       
     </p>
   </footer>

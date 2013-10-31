@@ -9,7 +9,9 @@
   <meta name="author" content="Yoni">
 
   
-  <meta name="description" content="Last week I bought the &ldquo;Everyday Rails Testing with Rspec&rdquo; book by Aaron Sumner for the third Ruby on Rails course by the TeaLeaf Academy &hellip;">
+  <meta name="description" content="Adding a file upload feature to an app is fairly simple with the popular
+Carrierwave gem. And commercial file hosting is seamless as well
+with Amazon &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -79,6 +81,359 @@
   <header>
     
       <!-- Now we're back to normal posts. Note the links used under href in both headers.-->
+        <h1 class="entry-title"><a href="/blog/2013/08/11/adding-file-upload-functionality-with-the-carrierwave-gem/">Adding File Upload Functionality With the Carrierwave Gem</a></h1>
+      
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-08-11T17:12:00+03:00" pubdate data-updated="true">Aug 11<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Adding a file upload feature to an app is fairly simple with the popular
+<strong>Carrierwave</strong> gem. And commercial file hosting is seamless as well
+with <strong>Amazon&rsquo;s Simple Storage Service (S3)</strong>, which plays very nicely
+with Carrierwave. I&rsquo;ll cover S3 integration in a later post. I&rsquo;ve broken
+down the process into 3 easy steps:</p>
+
+<h2>1. Add a file upload field in your view and a column to your model</h2>
+
+<p>The first step is to implement a file upload field in a form on your
+app:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">form_for</span> <span class="o">.</span><span class="n">.</span><span class="o">.</span><span class="n">.</span> <span class="k">do</span>
+</span><span class='line'>  <span class="n">f</span><span class="o">.</span><span class="n">file_field</span> <span class="ss">:passport_picture</span>
+</span><span class='line'>  <span class="n">f</span><span class="o">.</span><span class="n">submit</span> <span class="s2">&quot;Submit&quot;</span><span class="sb">`</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>You need a column called &ldquo;passport_picture&rdquo; in your model, so generate
+a migration and add in that column. We used a popular gem called
+<a href="https://github.com/carrierwaveuploader/carrierwave">Carrierwave</a> to handle the file uploading, so let&rsquo;s add it and its
+associated gems to the Gemfile:
+<code>gem 'carrierwave' gem "fog", "~&gt; 1.3.1" gem 'mini_magick'</code></p>
+
+<h2>2. Make uploader classes for each file</h2>
+
+<p>Now we need to make an uploader class that contains uploading
+instructions. Our uploader will instruct Carrierwave to use the
+<strong>MiniMagick</strong> gem for image processing (optional):
+<span style="text-decoration:underline;">app/uploaders/passport_picture_uploader.rb</span></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">PassportPictureUploader</span> <span class="o">&lt;</span> <span class="ss">CarrierWave</span><span class="p">:</span><span class="ss">:Uploader</span><span class="o">::</span><span class="no">Base</span>
+</span><span class='line'><span class="kp">include</span> <span class="ss">CarrierWave</span><span class="p">:</span><span class="ss">:MiniMagick</span>
+</span><span class='line'><span class="ss">store</span><span class="p">:</span> <span class="n">file</span>
+</span><span class='line'><span class="n">process</span> <span class="ss">:resize_to_fill</span> <span class="o">=&gt;</span> <span class="o">[</span><span class="mi">200</span><span class="p">,</span> <span class="mi">200</span><span class="o">]</span> <span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>One caveat here: you need to make sure ImageMagick is installed on your
+computer, and this was not easy for me. You can install it using
+Homebrew or Rvm if you don&rsquo;t have it, but google around for more
+specific instructions.</p>
+
+<h2>3. Mount the uploaders in your model</h2>
+
+<p>Now you need to tell your model to mount the uploader(s):</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">User</span> <span class="o">&lt;</span> <span class="ss">ActiveRecord</span><span class="p">:</span><span class="ss">:Base</span>
+</span><span class='line'>  <span class="n">mount_uploader</span> <span class="ss">:passport_picture</span><span class="p">,</span> <span class="no">PassportPictureUploader</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And that&rsquo;s it! As an aside, I think this would be a good candidate to
+shuffle off to a background process so that the user doesn&rsquo;t have to
+wait until the file uploads for the form to submit. I&rsquo;ll talk about what
+I&rsquo;ve learned about background processes in a later post.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <!-- Now we're back to normal posts. Note the links used under href in both headers.-->
+        <h1 class="entry-title"><a href="/blog/2013/08/11/namespacing-to-add-new-actors/">Namespacing to Add New Actors</a></h1>
+      
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-08-11T17:00:00+03:00" pubdate data-updated="true">Aug 11<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Namespacing can be used to add a new <strong>actor</strong> to an application &ndash; an
+Admin, who has special access, for instance. Let&rsquo;s say we want to have a
+Users Controller that is accessible only by admins. To do this, we route
+requests to a Users Controller through the Admin namespace (generating a
+route of <em>/admin/users/</em>) in config/routes.rb:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">namespace</span> <span class="ss">:admin</span> <span class="k">do</span>
+</span><span class='line'>  <span class="n">resources</span> <span class="ss">:users</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Rails generates a path of<code>/admin/users</code> and a helper of admin_users, a
+path of <code>/admin/users/new</code> and a helper of new_admin_user, etc. And
+now we need a new <strong>Users</strong> controller that we place in the
+<code>app/controllers/admin</code> directory.</p>
+
+<h3>Solution 1 &ndash; Regular Namespaced Controller</h3>
+
+<p>The simplest way to add in the new Admin actor is to create a new
+<code>users_controller.rb</code> in that directory, have it inherit from the
+Application Controller like a regular controller, and include an
+appropriate before_filter defined in the ApplicationController that
+will ensure that a user accessing any actions from that controller is an
+admin:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">Admin</span><span class="o">::</span><span class="no">UsersController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
+</span><span class='line'>  <span class="n">before_filter</span> <span class="ss">:ensure_admin</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>However, this is not the most efficient solution for larger apps where
+many controllers will be delegated to the Admin namespace &ndash; every
+controller would need to include the <code>before_filter :ensure_admin</code> line,
+which is not very DRY.</p>
+
+<h3>Solution 2 &ndash; Inheriting from an AdminsController</h3>
+
+<p>A more efficient way to do it is by having each namespaced class inherit
+from a separate Admin class, which itself inherits from
+ApplicationController and includes the before_filter. That way every
+inheriting subclass will require admin authorization:
+<span style="text-decoration:underline;">app/controllers/admin/users_controller.rb</span>
+<code>class Admin::UsersController &lt; AdminsController</code>   def create   end
+&hellip; end
+<span style="text-decoration:underline;">app/controllers/admins_controller.rb</span></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">AdminsController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
+</span><span class='line'>  <span class="n">before_filter</span> <span class="ss">:ensure_admin</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">ensure_admin</span>   <span class="o">.</span><span class="n">.</span><span class="o">.</span><span class="n">.</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Namespacing can be used to add any actor with particular access &ndash; a
+merchant, customer, admin, guest, etc. And actors can inherit from each
+other in order to share privileges as well. Now if you want to submit a
+model-backed form to a namespaced model, the syntax is similar to nested
+resources: <code>form_for [:admin, @user] do ...</code></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <!-- Now we're back to normal posts. Note the links used under href in both headers.-->
+        <h1 class="entry-title"><a href="/blog/2013/08/02/good-book-on-rspec-testing-for-rails-4-by-aaron-sumner/">Good Book on Rspec Testing for Rails 4 by Aaron Sumner</a></h1>
+      
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-08-02T17:10:00+03:00" pubdate data-updated="true">Aug 2<span>nd</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Hot off the press! Aaron Sumner&rsquo;s excellent book on Rspec for Rails has
+been updated for Rails 4 as of today, and includes up to date material
+on Capybara, Factorygirl and a number of other technologies. It can be
+downloaded as a pdf, mobi, or epub. <a href="https://leanpub.com/everydayrailsrspec">Check it out here</a>.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <!-- Now we're back to normal posts. Note the links used under href in both headers.-->
+        <h1 class="entry-title"><a href="/blog/2013/07/16/installing-redis-on-os-x/">Installing Redis on OS X</a></h1>
+      
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-07-16T17:08:00+03:00" pubdate data-updated="true">Jul 16<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I&rsquo;m now using Redis as the database component of Sidekiq, so I needed to
+install it on my mac. I found a great post explaining exactly where to
+put it on a mac, check it out
+&ndash; <a href="http://jasdeep.ca/2012/05/installing-redis-on-mac-os-x/">http://jasdeep.ca/2012/05/installing-redis-on-mac-os-x/</a>.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <!-- Now we're back to normal posts. Note the links used under href in both headers.-->
+        <h1 class="entry-title"><a href="/blog/2013/07/06/testing-with-selenium/">Testing With Selenium</a></h1>
+      
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-07-06T17:09:00+03:00" pubdate data-updated="true">Jul 6<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>When doing feature testing with the Capybara gem, you use <strong>racktest</strong>as
+the default testing driver. Racktest is fast, as it&rsquo;s a headless driver
+&ndash; it simulates the browser experience without firing up an actual
+browser. But if you need javascript, you need to use either
+<strong>Selenium</strong>, which actually fires up Firefox and simulates the entire
+user flow before your eyes, or <strong>Capybara WebKit</strong>, another headless
+driver that is faster than Selenium, but supports js. Once you&rsquo;ve
+configured Capybara, invoking selenium just requires that you set &ldquo;js:
+true&rdquo; explicitly after a feature / describe line (depending on whether
+you decide to use Capybara&rsquo;s DSL or the regular Rspec syntax). Example:
+<code>feature 'User interacts with the queue', js: true do</code> For this to work,
+you need to disable transactional_fixtures, a feature offered by rspec
+that opens a database transaction at the beginning of a test, and then
+rolls it back at the end. This feature <a href="http://weilu.github.io/blog/2012/11/10/conditionally-switching-off-transactional-fixtures/">does not work with Capybara
+javascript tests</a>, so disable it by placing
+<code>self.use_transactional_fixtures = false</code> after the feature/describe
+line (again, capybara dsl vs. rspec distinction) and before the
+scenario/it line. If you want the firefox browser window to stop so that
+you can play with one of the pages, you can drop a &lt;code>sleep [x
+seconds]&lt;/code> command anywhere in the test and the browser will wait
+for the specified time before continuing on its way (and then closing if
+it&rsquo;s the end of the test).</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <!-- Now we're back to normal posts. Note the links used under href in both headers.-->
         <h1 class="entry-title"><a href="/blog/2013/07/05/testing-is-not-bad-at-all/">Testing Is Not Bad at All</a></h1>
       
     
@@ -106,6 +461,64 @@
   <div class="entry-content"><p>Last week I bought the &ldquo;<a href="https://leanpub.com/everydayrailsrspec">Everyday Rails Testing with Rspec</a>&rdquo; book by Aaron Sumner for the third Ruby on Rails course by the TeaLeaf Academy (which, by the way, is a lot of fun!). I expected testing to be a bit of a chore, but it turns out that I&rsquo;m actually enjoying it.</p>
 
 <p>The course introduces testing very gradually, so that in each exercise you just focus on one or two tests. It&rsquo;s basically breaking up a new skill into edible chunks so that you can really focus on each chunk and process it properly until you understand it. Testing presents kind of a fun brain challenge, figuring out exactly which cases you want to test for and how to most accurately test for these cases, and at the same time it gives you a better understanding of what&rsquo;s going on in your own app.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <!-- Now we're back to normal posts. Note the links used under href in both headers.-->
+        <h1 class="entry-title"><a href="/blog/2013/07/02/programming-from-a-cafe-with-github/">Programming From a Cafe With Github</a></h1>
+      
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-07-02T17:07:00+03:00" pubdate data-updated="true">Jul 2<span>nd</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I do most of my programming from cafes and until today I&rsquo;ve faced a
+major annoyance &ndash; a lot of public wifis are configured to block ssh
+access. Unfortunately this is how I connect with Github, so I haven&rsquo;t
+able to push any code changes while working at the cafes. Today I found
+a fix for this <a href="http://stackoverflow.com/questions/7953806/github-ssh-via-public-wifi-port-22-blocked">on StackOverflow</a>, quoting <a href="https://help.github.com/articles/using-ssh-over-the-https-port">this article from
+Github</a> &ndash; all you need to do is configure your computer to use port
+443 for GitHub access, which is the default HTTPS port and is usually
+not blocked. Essentially you&rsquo;re making an SSH connection over the port
+generally used for HTTPS. 1. Test to see whether you can make SSH
+connections over the HTTPS port. In the terminal, run:
+<code>$ ssh -T -p 443 git@ssh.github.com</code> You should get the following
+response: Hi <em>username</em>! You&rsquo;ve successfully authenticated, but GitHub
+does not provide shell access. 2. Open &lsquo;\~/.ssh/config&rsquo; using your text
+editor (I use Sublime Text 2): <code></code> <code>subl ~/.ssh/config</code> 3. Paste in the
+following: <code>Host github.com Hostname ssh.github.com Port 443</code> 4. Test
+that it works: <code>$ ssh -T git@github.com</code> You should get the following
+response: Hi <em>username</em>! You&rsquo;ve successfully authenticated, but GitHub
+does not provide shell access. And that&rsquo;s it. Now you should be able to
+work with Git in public places. What I am curious about is whether there
+are security issues when doing this, and how to make it work for heroku
+as well. I guess that&rsquo;ll be for a future post.</p>
 </div>
   
   
@@ -260,15 +673,23 @@
   <ul id="recent_posts">
     
       <li class="post">
-        <a href="/blog/2013/07/05/testing-is-not-bad-at-all/">Testing Is Not Bad at All</a>
+        <a href="/blog/2013/08/11/adding-file-upload-functionality-with-the-carrierwave-gem/">Adding File Upload Functionality With the Carrierwave Gem</a>
       </li>
     
       <li class="post">
-        <a href="/blog/2013/06/10/find-by-versus-find-in-rails/">Find_by Versus Find in Rails</a>
+        <a href="/blog/2013/08/11/namespacing-to-add-new-actors/">Namespacing to Add New Actors</a>
       </li>
     
       <li class="post">
-        <a href="/blog/2013/05/19/is-it-pronounced-s-q-l-or-sequel/">Is It Pronounced &#8216;S-Q-L&#8217; or &#8216;Sequel&#8217;?</a>
+        <a href="/blog/2013/08/02/good-book-on-rspec-testing-for-rails-4-by-aaron-sumner/">Good Book on Rspec Testing for Rails 4 by Aaron Sumner</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/07/16/installing-redis-on-os-x/">Installing Redis on OS X</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/07/06/testing-with-selenium/">Testing With Selenium</a>
       </li>
     
   </ul>

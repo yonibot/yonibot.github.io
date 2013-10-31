@@ -5,11 +5,13 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>find_by versus find in Rails - Yoni Weisbrod</title>
+  <title>Testing with Selenium - Yoni Weisbrod</title>
   <meta name="author" content="Yoni">
 
   
-  <meta name="description" content="Edit: This article is a bit dated, since Rails 3 prefers the where method to the find method. Rails has a number of distinct ways to find &hellip;">
+  <meta name="description" content="When doing feature testing with the Capybara gem, you use racktestas
+the default testing driver. Racktest is fast, as it&rsquo;s a headless driver
+& &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +20,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://yoniweisbrod.com/blog/2013/06/10/find-by-versus-find-in-rails/">
+  <link rel="canonical" href="http://yoniweisbrod.com/blog/2013/07/06/testing-with-selenium/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -76,7 +78,7 @@
   <header>
     
       
-        <h1 class="entry-title">Find_by Versus Find in Rails</h1>
+        <h1 class="entry-title">Testing With Selenium</h1>
       
     
     
@@ -93,70 +95,35 @@
   
 
 
-<time datetime="2013-06-10T15:13:00+03:00" pubdate data-updated="true">Jun 10<span>th</span>, 2013</time>
+<time datetime="2013-07-06T17:09:00+03:00" pubdate data-updated="true">Jul 6<span>th</span>, 2013</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p><em>Edit: This article is a bit dated, since Rails 3 prefers the <strong>where</strong> method to the <strong>find </strong>method.</em></p>
-
-<p>Rails has a number of distinct ways to find ActiveRecord objects by id. They are:</p>
-
-<p>Object<strong>.find(id)</strong></p>
-
-<p>Object<strong>.find_by_id(id)</strong></p>
-
-<p>Object<strong>.find_all_by_id(id)</strong></p>
-
-<p>How do you know which one to use? Does it matter?</p>
-
-<p>I found that all 3 methods have their own unique properties, and can be used when you&rsquo;re looking for specific types of results. The differences can be expressed as follows:</p>
-
-<ol>
-<li><strong>Returning an ActiveRecord error </strong><strong>or nil - </strong>The basic &lsquo;find&rsquo; method throws an ActiveRecord::RecordNotFound error if you input an id that does not correspond to object. The other two methods return nil.</li>
-</ol>
-
-
-<p>2. <strong>Whether multiple objects can be returned</strong> &ndash; The &lsquo;find_by&rsquo; syntax only returns a single object. In contrast, the &lsquo;find&rsquo; and &lsquo;find_all_by_&rsquo; can return multiple objects. If you input multiple id&rsquo;s into a find_by method, it will simply return the first result.<strong>
-</strong></p>
-
-<p>3. <strong>Whether objects are always returned as an array &ndash;</strong> For the &lsquo;find_all_by&rsquo; method, the value is always returned in an array &ndash; even if the result is a single object.</p>
-
-<p>In summary:</p>
-
-<table style="background-color:#ffffcc;" width="100%" border="1" cellspacing="1" cellpadding="3">
-<tbody>
-<tr>
-<td><span style="text-decoration:underline;">Method</span> / <span style="text-decoration:underline;">Result</span></td>
-<td style="text-align:center;">**Error or Nil?**</td>
-<td style="text-align:center;">**Number of Objects it can Return**</td>
-<td style="text-align:center;">**Always returns an array?**</td>
-</tr>
-<tr>
-<td>**.find**</td>
-<td>ActiveRecord error</td>
-<td>Multiple</td>
-<td>No</td>
-</tr>
-<tr>
-<td>**.find_by**_</td>
-<td>nil</td>
-<td>Single</td>
-<td>No</td>
-</tr>
-<tr>
-<td>**.find_all_by_**</td>
-<td>nil</td>
-<td>Multiple</td>
-<td>Yes, even for a single object.</td>
-</tr>
-</tbody>
-</table>
-
-
-<p><a href="http://www.quackit.com/html/html_table_tutorial.cfm"> </a></p>
+<div class="entry-content"><p>When doing feature testing with the Capybara gem, you use <strong>racktest</strong>as
+the default testing driver. Racktest is fast, as it&rsquo;s a headless driver
+&ndash; it simulates the browser experience without firing up an actual
+browser. But if you need javascript, you need to use either
+<strong>Selenium</strong>, which actually fires up Firefox and simulates the entire
+user flow before your eyes, or <strong>Capybara WebKit</strong>, another headless
+driver that is faster than Selenium, but supports js. Once you&rsquo;ve
+configured Capybara, invoking selenium just requires that you set &ldquo;js:
+true&rdquo; explicitly after a feature / describe line (depending on whether
+you decide to use Capybara&rsquo;s DSL or the regular Rspec syntax). Example:
+<code>feature 'User interacts with the queue', js: true do</code> For this to work,
+you need to disable transactional_fixtures, a feature offered by rspec
+that opens a database transaction at the beginning of a test, and then
+rolls it back at the end. This feature <a href="http://weilu.github.io/blog/2012/11/10/conditionally-switching-off-transactional-fixtures/">does not work with Capybara
+javascript tests</a>, so disable it by placing
+<code>self.use_transactional_fixtures = false</code> after the feature/describe
+line (again, capybara dsl vs. rspec distinction) and before the
+scenario/it line. If you want the firefox browser window to stop so that
+you can play with one of the pages, you can drop a &lt;code>sleep [x
+seconds]&lt;/code> command anywhere in the test and the browser will wait
+for the specified time before continuing on its way (and then closing if
+it&rsquo;s the end of the test).</p>
 </div>
 
 
@@ -179,21 +146,15 @@
   
 
 
-<time datetime="2013-06-10T15:13:00+03:00" pubdate data-updated="true">Jun 10<span>th</span>, 2013</time>
+<time datetime="2013-07-06T17:09:00+03:00" pubdate data-updated="true">Jul 6<span>th</span>, 2013</time>
       
-
-<span class="categories">
-  
-    <a class='category' href='/blog/categories/db/'>DB</a>, <a class='category' href='/blog/categories/rails/'>Rails</a>, <a class='category' href='/blog/categories/sql/'>SQL</a>
-  
-</span>
 
 
     </p>
     
       <div class="sharing">
   
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://yoniweisbrod.com/blog/2013/06/10/find-by-versus-find-in-rails/" data-via="twityon" data-counturl="http://yoniweisbrod.com/blog/2013/06/10/find-by-versus-find-in-rails/" >Tweet</a>
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://yoniweisbrod.com/blog/2013/07/06/testing-with-selenium/" data-via="twityon" data-counturl="http://yoniweisbrod.com/blog/2013/07/06/testing-with-selenium/" >Tweet</a>
   
   
   
@@ -204,10 +165,10 @@
     
     <p class="meta">
       
-        <a class="basic-alignment left articlenav" href="/blog/2013/05/19/is-it-pronounced-s-q-l-or-sequel/" title="Previous Post: Is it pronounced 'S-Q-L' or 'Sequel'?">&laquo; Is it pronounced 'S-Q-L' or 'Sequel'?</a>
+        <a class="basic-alignment left articlenav" href="/blog/2013/07/05/testing-is-not-bad-at-all/" title="Previous Post: Testing is not bad at all">&laquo; Testing is not bad at all</a>
       
       
-        <a class="basic-alignment right articlenav" href="/blog/2013/07/02/programming-from-a-cafe-with-github/" title="Next Post: Programming from a Cafe with Github">Programming from a Cafe with Github &raquo;</a>
+        <a class="basic-alignment right articlenav" href="/blog/2013/07/16/installing-redis-on-os-x/" title="Next Post: Installing Redis on OS X">Installing Redis on OS X &raquo;</a>
       
     </p>
   </footer>
