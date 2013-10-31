@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: SQL | YONI]]></title>
+  <title><![CDATA[Category: SQL | Yoni Weisbrod]]></title>
   <link href="http://yoniweisbrod.com/blog/categories/sql/atom.xml" rel="self"/>
   <link href="http://yoniweisbrod.com/"/>
-  <updated>2013-10-31T15:19:55+02:00</updated>
+  <updated>2013-10-31T15:31:58+02:00</updated>
   <id>http://yoniweisbrod.com/</id>
   <author>
     <name><![CDATA[Yoni]]></name>
