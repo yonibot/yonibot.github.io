@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[YONI]]></title>
-  <link href="http://yonibot.github.io/atom.xml" rel="self"/>
-  <link href="http://yonibot.github.io/"/>
-  <updated>2013-10-31T14:47:00+02:00</updated>
-  <id>http://yonibot.github.io/</id>
+  <link href="http://yoniweisbrod.com/atom.xml" rel="self"/>
+  <link href="http://yoniweisbrod.com/"/>
+  <updated>2013-10-31T14:58:08+02:00</updated>
+  <id>http://yoniweisbrod.com/</id>
   <author>
     <name><![CDATA[Yoni]]></name>
     
@@ -14,9 +14,9 @@
   
   <entry>
     <title type="html"><![CDATA[Testing is not bad at all]]></title>
-    <link href="http://yonibot.github.io/blog/2013/07/05/testing-is-not-bad-at-all/"/>
+    <link href="http://yoniweisbrod.com/blog/2013/07/05/testing-is-not-bad-at-all/"/>
     <updated>2013-07-05T15:22:00+03:00</updated>
-    <id>http://yonibot.github.io/blog/2013/07/05/testing-is-not-bad-at-all</id>
+    <id>http://yoniweisbrod.com/blog/2013/07/05/testing-is-not-bad-at-all</id>
     <content type="html"><![CDATA[<p>Last week I bought the &ldquo;<a href="https://leanpub.com/everydayrailsrspec">Everyday Rails Testing with Rspec</a>&rdquo; book by Aaron Sumner for the third Ruby on Rails course by the TeaLeaf Academy (which, by the way, is a lot of fun!). I expected testing to be a bit of a chore, but it turns out that I&rsquo;m actually enjoying it.</p>
 
 <p>The course introduces testing very gradually, so that in each exercise you just focus on one or two tests. It&rsquo;s basically breaking up a new skill into edible chunks so that you can really focus on each chunk and process it properly until you understand it. Testing presents kind of a fun brain challenge, figuring out exactly which cases you want to test for and how to most accurately test for these cases, and at the same time it gives you a better understanding of what&rsquo;s going on in your own app.</p>
@@ -25,9 +25,9 @@
   
   <entry>
     <title type="html"><![CDATA[find_by versus find in Rails]]></title>
-    <link href="http://yonibot.github.io/blog/2013/06/10/find-by-versus-find-in-rails/"/>
+    <link href="http://yoniweisbrod.com/blog/2013/06/10/find-by-versus-find-in-rails/"/>
     <updated>2013-06-10T15:13:00+03:00</updated>
-    <id>http://yonibot.github.io/blog/2013/06/10/find-by-versus-find-in-rails</id>
+    <id>http://yoniweisbrod.com/blog/2013/06/10/find-by-versus-find-in-rails</id>
     <content type="html"><![CDATA[<p><em>Edit: This article is a bit dated, since Rails 3 prefers the <strong>where</strong> method to the <strong>find </strong>method.</em></p>
 
 <p>Rails has a number of distinct ways to find ActiveRecord objects by id. They are:</p>
@@ -90,9 +90,9 @@
   
   <entry>
     <title type="html"><![CDATA[Is it pronounced 'S-Q-L' or 'Sequel'?]]></title>
-    <link href="http://yonibot.github.io/blog/2013/05/19/is-it-pronounced-s-q-l-or-sequel/"/>
+    <link href="http://yoniweisbrod.com/blog/2013/05/19/is-it-pronounced-s-q-l-or-sequel/"/>
     <updated>2013-05-19T15:09:00+03:00</updated>
-    <id>http://yonibot.github.io/blog/2013/05/19/is-it-pronounced-s-q-l-or-sequel</id>
+    <id>http://yoniweisbrod.com/blog/2013/05/19/is-it-pronounced-s-q-l-or-sequel</id>
     <content type="html"><![CDATA[<p>There&rsquo;s really no definitive answer to this one. But the next time someone challenges your pronunciation of &lsquo;SQL&rsquo;, you can at least back up your choice with some cold hard facts.</p>
 
 <p>The SQL database standard was invented in the early 70s and was originally called &lsquo;SEQUEL&rsquo; &ndash; an acronym for Structured English Query Language. As a result of an IP dispute with british Aircraft manufacturer Hawker Siddeley, the name was shortened to SQL &ndash; Structured Query Language. Despite the change, many people continued to use the old name &lsquo;Sequel&rsquo;, according to an e-mail from one of the two inventors of the standard <a href="http://patorjk.com/blog/2012/01/26/pronouncing-sql-s-q-l-or-sequel/">obtained by this intrepid blogger</a>. Still, the inventor suggests that the &lsquo;official&rsquo; pronunciation is probably &rsquo;S-Q-L&#8217;, as it is spelled in the ISO Standard.</p>

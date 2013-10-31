@@ -1,4 +1,4 @@
 User-agent: *
 Disallow: 
 
-Sitemap: http://yonibot.github.io/sitemap.xml 
+Sitemap: http://yoniweisbrod.com/sitemap.xml 
