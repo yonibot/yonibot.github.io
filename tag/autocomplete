@@ -9,6 +9,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
     <title>autocomplete - Yoni Weisbrod</title>
+    <meta name="google-site-verification" content="IvI-f1O6L1khbEAaZYBJgCgXkKlGLC0BoEJHknvESbk" />
     <meta name="description" content="" />
 
     <meta name="HandheldFriendly" content="True" />
@@ -94,7 +95,7 @@
                     <h2 class="post-title" itemprop="name"><a href="../autocomplete-magic-with-rails/index.html" itemprop="url">Autocomplete Magic with Rails</a></h2>
                 </header>
                 <section class="post-excerpt" itemprop="description">
-                    <p>The Rails4-autocomplete gem gem makes adding autocomplete to an input field a lot smoother, and there are some cool features you can add when using it&hellip;</p>
+                    <p>The Rails4-autocomplete gem makes adding autocomplete to an input field a lot smoother, and there are some cool features you can add when using it for&hellip;</p>
                 </section>
                 <div class="post-meta"><time datetime="2014-10-02">02 Oct 2014</time> on <a href="rails">rails</a>, <a href="autocomplete"> autocomplete</a></div>
             </div>
