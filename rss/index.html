@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Yoni Weisbrod]]></title><description><![CDATA[Fresh Rails and AngularJS insights from the field]]></description><link>http://localhost:2368/</link><generator>Ghost 0.5</generator><lastBuildDate>Sat, 04 Oct 2014 13:34:46 GMT</lastBuildDate><atom:link href="http://localhost:2368/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Autocomplete Magic with Rails]]></title><description><![CDATA[<p>The <a href="https://github.com/peterwillcn/rails4-autocomplete">Rails4-autocomplete gem</a> makes adding autocomplete to an input field a lot smoother, and there are some cool features you can add when using it for search. I'm going to go through the basics of adding autocomplete to a form field, and then I'll talk about using autocomplete in non-form-builder fields. At the end I'll share a tip for adding one-click search using the gem's event hooks. Note that this can be used for both Rails 3 and Rails 4.</p>
+<rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Yoni Weisbrod]]></title><description><![CDATA[Fresh Rails and AngularJS insights from the field]]></description><link>http://localhost:2368/</link><generator>Ghost 0.5</generator><lastBuildDate>Sat, 04 Oct 2014 15:13:45 GMT</lastBuildDate><atom:link href="http://localhost:2368/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Autocomplete Magic with Rails]]></title><description><![CDATA[<p>The <a href="https://github.com/peterwillcn/rails4-autocomplete">Rails4-autocomplete gem</a> makes adding autocomplete to an input field a lot smoother, and there are some cool features you can add when using it for search. I'm going to go through the basics of adding autocomplete to a form field, and then I'll talk about using autocomplete in non-form-builder fields. At the end I'll share a tip for adding one-click search using the gem's event hooks. Note that this can be used for both Rails 3 and Rails 4.</p>
 
 <p>This is not the easiest gem to implement because it's so configurable, and <a href="https://github.com/crowdint/rails3-jquery-autocomplete-app">an entire gem</a> has been written to demonstrate the process, but honestly I found the explanations on the original readme much more helpful. I highly recommend reading it so that you can do all sorts of creative things with your implementation.</p>
 
@@ -128,4 +128,96 @@ end
   accepts_nested_attributes_for :video_titles, allow_destroy: true
 </code></pre>
 
-<p>And that’s it! Feel free to post in the comments if you have any issues with the above.</p>]]></description><link>http://localhost:2368/nested-attributes-in-activeadmin-for-rails-4/</link><guid isPermaLink="false">cf80b5e4-0c68-476a-9028-f7df99c1ac8d</guid><dc:creator><![CDATA[Yoni]]></dc:creator><pubDate>Fri, 11 Jul 2014 09:00:00 GMT</pubDate></item></channel></rss>
+<p>And that’s it! Feel free to post in the comments if you have any issues with the above.</p>]]></description><link>http://localhost:2368/nested-attributes-in-activeadmin-for-rails-4/</link><guid isPermaLink="false">cf80b5e4-0c68-476a-9028-f7df99c1ac8d</guid><dc:creator><![CDATA[Yoni]]></dc:creator><pubDate>Fri, 11 Jul 2014 09:00:00 GMT</pubDate></item><item><title><![CDATA[Three Changes in Ruby 2.1.0]]></title><description><![CDATA[<div class="entry-content"><p>Many changes were made in the December 25th MRI (Matz&rsquo;s Ruby Interpreter) Ruby update, and I want to discuss three of these changes, and what they mean.</p>
+
+<p>One of the most prominent changes deals with Ruby&rsquo;s memory allocation algorithm, and introduces a new garbage collection system &ndash; the generational RgenGC. I also want to discuss the new String#scrub method, which scrubs invalid byte codes from strings, and the new return value of defining a new method. Let&rsquo;s start with the deepest change, the garbage collector:</p>
+
+<h4>1. RGenGC &ndash; The Generational Garbage Collector</h4>
+
+<p>Garbage collection (&lsquo;gc&rsquo;) refers to the automated reallocation of memory when objects are no longer in use. The most recent Ruby version brings garbage collection back to the forefront, changing the gc mechanism for the first time since Matz released Ruby to the public in 1995. (Note, however, that other versions of Ruby have had generational garbage collection for years.)</p>
+
+<p>Even though developers in Ruby don&rsquo;t generally have to think about memory management (because the Ruby interpreter does it for them), I believe that knowing what goes on under the hood is important to being an informed, skilled practitioner. Garbage collection in particular is an important topic because it occupies a significant amount of processing time. I had a huge amount of help understanding it from the writings of <a href="http://patshaughnessy.net/">Pat Shaughnessy, author of the book &lsquo;Ruby Under a Microscope&rsquo;</a>.</p>
+
+<h5>MRI Ruby since 1995 &ndash; Stop the World &amp; Mark and Sweep</h5>
+
+<p>When runtime begins, Ruby allocates memory to a linked <strong>free list</strong> of &lsquo;empty objects&rsquo;. When your code creates a new object, Ruby grabs the next available empty object from the free list and points it to the object that holds it (a variable, for instance). Eventually, if you want the variable to refer to a new object (say you want the variable 'alice' to equal your &lsquo;alice object&rsquo;, but with brown hair rather than orange), a new object will be taken off the free list, given the properties of brown-haired Alice, and pointed to your &lsquo;alice&rsquo; variable. What happens to crazy orange-haired Alice? She still exists in memory, but nothing points to her!</p>
+
+<p>The program thusly continues, and objects accrue in memory that we no longer need.</p>
+
+<p>When there are no longer free-list objects to hand out, Ruby has a cleaning fit. It <strong>stops-the-world</strong>, and finally gets around to tossing out the trash and tidying up by <strong>marking and sweeping</strong>. It makes a list of all objects that can be reached through pointers, marks them with a binary 1 value (rather than 0 value objects that just dangle, like orange-haired Alice), and sweeps the rest of the objects back into a new free list (by re-adjusting pointers).</p>
+
+<p>This way, Ruby only allocates memory at the beginning, and when performing garbage collection.</p>
+
+<h5>MRI Ruby Dec 2013 &ndash; RGenGC</h5>
+
+<p>This approach is antiquated &ndash; literally; the technology was published over 50 years ago, by John McCarthy, inventor of the original Lisp implementation.The generational gc approach introduces a number of improvements.</p>
+
+<p>Instead of treating all objects equally, generational gc promotes objects to different lists based on how long they&rsquo;ve existed as accessible objects (rather than dangling objects), under the <em>infant mortality</em> or <em>weak generational</em> theory, that posits two things:</p>
+
+<ol>  
+<li> Most new objects die young</li>  
+<li> Older objects remain active for longer</li>  
+</ol>
+
+
+<p>This makes sense, as we often use variables to refer to a new object, run a method on the object, and now the variable refers to something completely different. The first &lsquo;new&rsquo; object is now as good as dead, and might as well be tossed (or reincarnated, as Ruby does), while the second object might actually remain useful to us.</p>
+
+<p>Now, Ruby still carries out a mark &amp; sweep, but instead of just sweeping the free objects, it also promotes the marked objects &ndash; from <strong>generation zero</strong> to <strong>generation one</strong>. And while Ruby still periodically carries out a garbage collection for generation zero, it leaves generation one (the &lsquo;old&rsquo; generation) alone, until a certain threshold of objects is reached. Multiple mark &amp; sweeps occur, and only infrequently does a <strong>full collection</strong> occur, which also marks and sweeps from generation one.</p>
+
+<p>In this way, Ruby treats new objects, which need to be trashed/recycled often, differently from older objects, which often remain alive for longer amounts of time. Another important concept here is <strong>write barriers</strong>, which I plan to cover in a later post (basically Ruby maintains a list of mature objects that point to younger objects on generation zero, so that the younger items are not garbage collected. Currently only the most popular classes are write-barrier protected &ndash; array, string, hash, object, and numeric objects.</p>
+
+<h4>2. String#scrub</h4>
+
+<p>This method provides a means to detect invalid UTF-8 byte sequences in a given string, and replace them with whatever string you provide as an argument (or, if nothing is provided, it is replaced with a question-mark symbol). It is also capable of evaluating a block, and replacing the invalid sequence with the block value.</p>
+
+<p>It&rsquo;s handy for times when you&rsquo;re accepting user input, and want to replace strings that will throw exceptions with acceptable strings.</p>
+
+<p>For instance:</p>
+
+<figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>  
+<span class="line-number">2</span>  
+<span class="line-number">3</span>  
+<span class="line-number">4</span>  
+</pre></td><td class="code">
+
+<pre><code class="ruby"><span class="line"><span class="s2">&quot;Hi </span><span class="se">\255</span><span class="s2">!&quot;</span><span class="o">.</span><span class="n">split</span>   <span class="c1">#/255 is an invalid UTF-8 byte sequence</span>
+</span><span class="line"><span class="o">=&gt;</span> <span class="ss">ArgumentError</span><span class="p">:</span> <span class="n">invalid</span> <span class="n">byte</span> <span class="n">sequence</span> <span class="k">in</span> <span class="no">UTF</span><span class="o">-</span><span class="mi">8</span>
+</span><span class="line"><span class="s2">&quot;Hi </span><span class="se">\255</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">scrub</span><span class="p">(</span><span class="s2">&quot;valid_string&quot;</span><span class="p">)</span>
+</span><span class="line"><span class="o">=&gt;</span> <span class="s2">&quot;Hi valid_string&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>To paraphrase <a href="http://ruby-doc.org/core-2.1.0/String.html#method-i-scrub">ruby-doc.org</a> (with punctuation):</p>
+
+<blockquote><p>If the string has an invalid byte sequence, it replaces the invalid bytes with the given replacement character, or else returns self. If a block is given, it replaces the invalid bytes with the returned value of the block.</p></blockquote>
+
+<p>For an excellent overview of the history of encoding, from ANSI, to Unicode, to UTF-8 (the currently dominant encoding scheme on the internet), see <a href="http://www.joelonsoftware.com/articles/Unicode.html">The Absolute Minimum Every Software Developer Absolutely, Positively Must Know About Unicode and Character Sets (No Excuses!)</a>, by Joel Spolsky. UTF-8 encodes all characters in all languages in a sequence of up to four 8-bit bytes.</p>
+
+<h4>3. def&rsquo;s return value</h4>
+
+<p>Declaring a new method now returns the method name as a symbol, rather than &lsquo;nil&rsquo;. To illustrate:</p>
+
+<p>Formerly:</p>
+
+<figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>  
+<span class="line-number">2</span>  
+</pre></td><td class="code">
+
+<pre><code class="ruby"><span class="line"><span class="k">def</span> <span class="nf">new_method</span><span class="p">;</span> <span class="k">end</span>
+</span><span class="line"><span class="o">=&gt;</span> <span class="kp">nil</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>In Ruby 2.1.0:</p>
+
+<figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>  
+<span class="line-number">2</span>  
+</pre></td><td class="code">
+
+<pre><code class="ruby"><span class="line"><span class="k">def</span> <span class="nf">new_method</span><span class="p">;</span> <span class="k">end</span>
+</span><span class="line"><span class="o">=&gt;</span> <span class="ss">:new_method</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>For implications of this change, see <a href="http://rkh.im/ruby-2.1">this great blog post regarding the new Ruby 2.1.0 changes</a>.</p>  
+</div>]]></description><link>http://localhost:2368/three-changes-in-ruby-2-1-0/</link><guid isPermaLink="false">d9e93972-7069-42a8-90df-a6f8ed131539</guid><dc:creator><![CDATA[Yoni]]></dc:creator><pubDate>Sun, 29 Dec 2013 10:00:00 GMT</pubDate></item></channel></rss>

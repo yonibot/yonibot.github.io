@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <!-- (1) Optimize for mobile versions: http://goo.gl/EOpFl -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- (1) force latest IE rendering engine: bit.ly/1c8EiC9 -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Three Changes in Ruby 2.1.0</title>
+    <meta name="google-site-verification" content="IvI-f1O6L1khbEAaZYBJgCgXkKlGLC0BoEJHknvESbk" />
+    <meta name="description" content="" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="MobileOptimized" content="320" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Three Changes in Ruby 2.1.0">
+    <meta name="twitter:description" content="">
+    <meta name="twitter:site" content="https://twitter.com/yoniweisbrod"> <!-- Change this to your URL -->
+<meta name="twitter:creator" content="@yoniweisbrod"> <!-- Change this to your Twitter Handel -->
+    <meta name="google-site-verification" content="">
+    <meta property="fb:admins" content="">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Three Changes in Ruby 2.1.0">
+    <meta property="og:description" content="">
+
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../assets/js/styles/obsidian.css?v=2be9884930">
+    <link rel="stylesheet" href="http://brick.a.ssl.fastly.net/Linux+Libertine:400,400i,700,700i/Open+Sans:400,400i,700,700i">
+    <link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" media="screen" href="../assets/css/main.css?v=2be9884930" />
+    <link rel="stylesheet" type="text/css" media="print" href="../assets/css/print.css?v=2be9884930" />
+    <script src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
+    <meta name="generator" content="Ghost 0.5" />
+<link rel="alternate" type="application/rss+xml" title="Yoni Weisbrod" href="../rss/index.html">
+<link rel="canonical" href="http://localhost:2368/three-changes-in-ruby-2-1-0/" />
+</head>
+<body class="post-template">
+
+    <a href="http://localhost:2368" class="logo-readium"><span class="logo" style="background-image: url(../content/images/2014/10/linkedin-logo-1.jpg)"></span></a>
+    
+<!-- Go to www.addthis.com/dashboard to customize your tools -->
+<script type="text/javascript" src="http://s7.addthis.com/js/300/addthis_widget.js#pubid=ra-542fcb246139f253" async></script>
+
+<main class="content" role="main">
+
+    <article class="post">
+
+
+
+        <div class="noarticleimage">
+            <div class="post-meta">
+                <h1 class="post-title">Three Changes in Ruby 2.1.0</h1>
+                <div class="cf post-meta-text">
+                    <div class="author-image" style="background-image: url(http://www.gravatar.com/avatar/2fd017fbcb4fcdf8f936ffeb9c4ca32f?d=404&amp;s=250)">Blog Logo</div>
+                    <h4 class="author-name" itemprop="author" itemscope itemtype="http://schema.org/Person"><a href="../author/yoni/index.html">Yoni</a></h4> on
+                    <time datetime="2013-12-29">29 Dec 2013</time>, tagged on 
+                </div>
+            </div>
+        </div>
+        <br>
+        <br>
+        <br>
+
+
+
+            <section class="post-content">
+                <div class="post-reading">
+                    <span class="post-reading-time"></span> read
+                </div>
+                <a name="topofpage"></a>
+                <div class="entry-content"><p>Many changes were made in the December 25th MRI (Matz&rsquo;s Ruby Interpreter) Ruby update, and I want to discuss three of these changes, and what they mean.</p>
+
+<p>One of the most prominent changes deals with Ruby&rsquo;s memory allocation algorithm, and introduces a new garbage collection system &ndash; the generational RgenGC. I also want to discuss the new String#scrub method, which scrubs invalid byte codes from strings, and the new return value of defining a new method. Let&rsquo;s start with the deepest change, the garbage collector:</p>
+
+<h4>1. RGenGC &ndash; The Generational Garbage Collector</h4>
+
+<p>Garbage collection (&lsquo;gc&rsquo;) refers to the automated reallocation of memory when objects are no longer in use. The most recent Ruby version brings garbage collection back to the forefront, changing the gc mechanism for the first time since Matz released Ruby to the public in 1995. (Note, however, that other versions of Ruby have had generational garbage collection for years.)</p>
+
+<p>Even though developers in Ruby don&rsquo;t generally have to think about memory management (because the Ruby interpreter does it for them), I believe that knowing what goes on under the hood is important to being an informed, skilled practitioner. Garbage collection in particular is an important topic because it occupies a significant amount of processing time. I had a huge amount of help understanding it from the writings of <a href="http://patshaughnessy.net">Pat Shaughnessy, author of the book &lsquo;Ruby Under a Microscope&rsquo;</a>.</p>
+
+<h5>MRI Ruby since 1995 &ndash; Stop the World &amp; Mark and Sweep</h5>
+
+<p>When runtime begins, Ruby allocates memory to a linked <strong>free list</strong> of &lsquo;empty objects&rsquo;. When your code creates a new object, Ruby grabs the next available empty object from the free list and points it to the object that holds it (a variable, for instance). Eventually, if you want the variable to refer to a new object (say you want the variable 'alice' to equal your &lsquo;alice object&rsquo;, but with brown hair rather than orange), a new object will be taken off the free list, given the properties of brown-haired Alice, and pointed to your &lsquo;alice&rsquo; variable. What happens to crazy orange-haired Alice? She still exists in memory, but nothing points to her!</p>
+
+<p>The program thusly continues, and objects accrue in memory that we no longer need.</p>
+
+<p>When there are no longer free-list objects to hand out, Ruby has a cleaning fit. It <strong>stops-the-world</strong>, and finally gets around to tossing out the trash and tidying up by <strong>marking and sweeping</strong>. It makes a list of all objects that can be reached through pointers, marks them with a binary 1 value (rather than 0 value objects that just dangle, like orange-haired Alice), and sweeps the rest of the objects back into a new free list (by re-adjusting pointers).</p>
+
+<p>This way, Ruby only allocates memory at the beginning, and when performing garbage collection.</p>
+
+<h5>MRI Ruby Dec 2013 &ndash; RGenGC</h5>
+
+<p>This approach is antiquated &ndash; literally; the technology was published over 50 years ago, by John McCarthy, inventor of the original Lisp implementation.The generational gc approach introduces a number of improvements.</p>
+
+<p>Instead of treating all objects equally, generational gc promotes objects to different lists based on how long they&rsquo;ve existed as accessible objects (rather than dangling objects), under the <em>infant mortality</em> or <em>weak generational</em> theory, that posits two things:</p>
+
+<ol>  
+<li> Most new objects die young</li>  
+<li> Older objects remain active for longer</li>  
+</ol>
+
+
+<p>This makes sense, as we often use variables to refer to a new object, run a method on the object, and now the variable refers to something completely different. The first &lsquo;new&rsquo; object is now as good as dead, and might as well be tossed (or reincarnated, as Ruby does), while the second object might actually remain useful to us.</p>
+
+<p>Now, Ruby still carries out a mark &amp; sweep, but instead of just sweeping the free objects, it also promotes the marked objects &ndash; from <strong>generation zero</strong> to <strong>generation one</strong>. And while Ruby still periodically carries out a garbage collection for generation zero, it leaves generation one (the &lsquo;old&rsquo; generation) alone, until a certain threshold of objects is reached. Multiple mark &amp; sweeps occur, and only infrequently does a <strong>full collection</strong> occur, which also marks and sweeps from generation one.</p>
+
+<p>In this way, Ruby treats new objects, which need to be trashed/recycled often, differently from older objects, which often remain alive for longer amounts of time. Another important concept here is <strong>write barriers</strong>, which I plan to cover in a later post (basically Ruby maintains a list of mature objects that point to younger objects on generation zero, so that the younger items are not garbage collected. Currently only the most popular classes are write-barrier protected &ndash; array, string, hash, object, and numeric objects.</p>
+
+<h4>2. String#scrub</h4>
+
+<p>This method provides a means to detect invalid UTF-8 byte sequences in a given string, and replace them with whatever string you provide as an argument (or, if nothing is provided, it is replaced with a question-mark symbol). It is also capable of evaluating a block, and replacing the invalid sequence with the block value.</p>
+
+<p>It&rsquo;s handy for times when you&rsquo;re accepting user input, and want to replace strings that will throw exceptions with acceptable strings.</p>
+
+<p>For instance:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>  
+<span class='line-number'>2</span>  
+<span class='line-number'>3</span>  
+<span class='line-number'>4</span>  
+</pre></td><td class='code'>
+
+<pre><code class='ruby'><span class='line'><span class="s2">&quot;Hi </span><span class="se">\255</span><span class="s2">!&quot;</span><span class="o">.</span><span class="n">split</span>   <span class="c1">#/255 is an invalid UTF-8 byte sequence</span>
+</span><span class='line'><span class="o">=&gt;</span> <span class="ss">ArgumentError</span><span class="p">:</span> <span class="n">invalid</span> <span class="n">byte</span> <span class="n">sequence</span> <span class="k">in</span> <span class="no">UTF</span><span class="o">-</span><span class="mi">8</span>
+</span><span class='line'><span class="s2">&quot;Hi </span><span class="se">\255</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">scrub</span><span class="p">(</span><span class="s2">&quot;valid_string&quot;</span><span class="p">)</span>
+</span><span class='line'><span class="o">=&gt;</span> <span class="s2">&quot;Hi valid_string&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>To paraphrase <a href="http://ruby-doc.org/core-2.1.0/String.html#method-i-scrub">ruby-doc.org</a> (with punctuation):</p>
+
+<blockquote><p>If the string has an invalid byte sequence, it replaces the invalid bytes with the given replacement character, or else returns self. If a block is given, it replaces the invalid bytes with the returned value of the block.</p></blockquote>
+
+<p>For an excellent overview of the history of encoding, from ANSI, to Unicode, to UTF-8 (the currently dominant encoding scheme on the internet), see <a href="http://www.joelonsoftware.com/articles/Unicode.html">The Absolute Minimum Every Software Developer Absolutely, Positively Must Know About Unicode and Character Sets (No Excuses!)</a>, by Joel Spolsky. UTF-8 encodes all characters in all languages in a sequence of up to four 8-bit bytes.</p>
+
+<h4>3. def&rsquo;s return value</h4>
+
+<p>Declaring a new method now returns the method name as a symbol, rather than &lsquo;nil&rsquo;. To illustrate:</p>
+
+<p>Formerly:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>  
+<span class='line-number'>2</span>  
+</pre></td><td class='code'>
+
+<pre><code class='ruby'><span class='line'><span class="k">def</span> <span class="nf">new_method</span><span class="p">;</span> <span class="k">end</span>
+</span><span class='line'><span class="o">=&gt;</span> <span class="kp">nil</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>In Ruby 2.1.0:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>  
+<span class='line-number'>2</span>  
+</pre></td><td class='code'>
+
+<pre><code class='ruby'><span class='line'><span class="k">def</span> <span class="nf">new_method</span><span class="p">;</span> <span class="k">end</span>
+</span><span class='line'><span class="o">=&gt;</span> <span class="ss">:new_method</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>For implications of this change, see <a href="http://rkh.im/ruby-2.1">this great blog post regarding the new Ruby 2.1.0 changes</a>.</p>  
+</div>
+            </section>
+            <footer class="post-footer">
+                <section class="share">
+                    <a class="icon-twitter" href="http://twitter.com/share?text=Three%20Changes%20in%20Ruby%202.1.0&url=http://localhost:2368/three-changes-in-ruby-2-1-0/"
+                        onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                        <span class="hidden">Twitter</span>
+                    </a>
+                    <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:2368/three-changes-in-ruby-2-1-0/"
+                        onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                        <span class="hidden">Facebook</span>
+                    </a>
+                    <a class="icon-google-plus" href="https://plus.google.com/share?url=http://localhost:2368/three-changes-in-ruby-2-1-0/"
+                       onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                        <span class="hidden">Google+</span>
+                    </a>
+                </section>
+            </footer>
+            <div class="bottom-teaser cf">
+                <div class="isLeft">
+                    <h5 class="index-headline featured"><span>Written by</span></h5>
+                    <section class="author">
+                        <div class="author-image" style="background-image: url(http://www.gravatar.com/avatar/2fd017fbcb4fcdf8f936ffeb9c4ca32f?d=404&amp;s=250)">Blog Logo</div>
+                        <h4><a href="../author/yoni/index.html">Yoni</a></h4>
+                        <p class="bio"></p>
+                        <hr>
+                        <p class="published">Published <time datetime="2013-12-29">29 Dec 2013</time></p>
+                    </section>
+                </div>
+                <div class="isRight">
+                    <h5 class="index-headline featured"><span>Supported by</span></h5>
+                    <footer class="site-footer">
+                        <section class="poweredby">Proudly published with <a class="icon-ghost" href="http://ghost.org"> Ghost</a></section>
+                        <a class="subscribe" href="http://localhost:2368/rss/"><span class="tooltip">You should subscribe to my RSS feed.</span></a>
+                        <div class="inner">
+                             <section class="copyright">All content copyright <a href="http://localhost:2368/">Yoni Weisbrod</a> &copy; 2014<br>All rights reserved.</section>
+
+                        </div>
+                    </footer>
+                </div>
+            </div>
+
+    </article>
+
+</main>
+
+<div class="bottom-closer">
+    <div class="background-closer-image" style="background-image: url(../content/images/2014/10/workshop-3-copy.jpg)">
+        Image
+    </div>
+    <div class="inner">
+        <h1 class="blog-title">Yoni Weisbrod</h1>
+        <h2 class="blog-description">Fresh Rails and AngularJS insights from the field</h2>
+        <a href="../index.html" class="btn">Back to Overview</a>
+    </div>
+</div>
+
+
+    <script src="../public/jquery.js?v=2be9884930"></script>
+
+    <script type="text/javascript" src="../assets/js/jquery.fitvids.js?v=2be9884930"></script>
+    <script type="text/javascript" src="../assets/js/index.js?v=2be9884930"></script>
+    <script src="../assets/js/readingTime.min.js?v=2be9884930"></script>
+    <script src="../assets/js/highlight.pack.js?v=2be9884930"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    
+    <script>
+        
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    
+      ga('create', 'UA-55415255-1', 'yoniweisbrod.com'); 
+      ga('send', 'pageview');
+    
+    </script>
+
+</body>
+</html>
