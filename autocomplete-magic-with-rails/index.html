@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <!-- (1) Optimize for mobile versions: http://goo.gl/EOpFl -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- (1) force latest IE rendering engine: bit.ly/1c8EiC9 -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Autocomplete Magic with Rails</title>
+    <meta name="description" content="" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="MobileOptimized" content="320" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Autocomplete Magic with Rails">
+    <meta name="twitter:description" content="">
+    <meta name="twitter:site" content="https://twitter.com/yoniweisbrod"> <!-- Change this to your URL -->
+<meta name="twitter:creator" content="@yoniweisbrod"> <!-- Change this to your Twitter Handel -->
+    <meta name="google-site-verification" content="">
+    <meta property="fb:admins" content="">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Autocomplete Magic with Rails">
+    <meta property="og:description" content="">
+
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../assets/js/styles/obsidian.css?v=81cab6acca">
+    <link rel="stylesheet" href="http://brick.a.ssl.fastly.net/Linux+Libertine:400,400i,700,700i/Open+Sans:400,400i,700,700i">
+    <link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" media="screen" href="../assets/css/main.css?v=81cab6acca" />
+    <link rel="stylesheet" type="text/css" media="print" href="../assets/css/print.css?v=81cab6acca" />
+    <script src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
+    <meta name="generator" content="Ghost 0.5" />
+<link rel="alternate" type="application/rss+xml" title="Yoni Weisbrod" href="../rss/index.html">
+<link rel="canonical" href="http://localhost:2368/autocomplete-magic-with-rails/" />
+</head>
+<body class="post-template tag-rails tag-autocomplete">
+
+    <a href="http://localhost:2368" class="logo-readium"><span class="logo" style="background-image: url(../content/images/2014/10/linkedin-logo-1.jpg)"></span></a>
+    
+
+<main class="content" role="main">
+
+    <article class="post tag-rails tag-autocomplete">
+
+
+
+        <div class="noarticleimage">
+            <div class="post-meta">
+                <h1 class="post-title">Autocomplete Magic with Rails</h1>
+                <div class="cf post-meta-text">
+                    <div class="author-image" style="background-image: url(http://www.gravatar.com/avatar/2fd017fbcb4fcdf8f936ffeb9c4ca32f?d=404&amp;s=250)">Blog Logo</div>
+                    <h4 class="author-name" itemprop="author" itemscope itemtype="http://schema.org/Person"><a href="../author/yoni/index.html">Yoni</a></h4> on
+                    <time datetime="2014-10-02">02 Oct 2014</time>, tagged on <span class="post-tag-rails"><a href="../tag/rails">rails</a></span><span class="post-tag-autocomplete">, <a href="../tag/autocomplete"> autocomplete</a></span>
+                </div>
+            </div>
+        </div>
+        <br>
+        <br>
+        <br>
+
+
+
+            <section class="post-content">
+                <div class="post-reading">
+                    <span class="post-reading-time"></span> read
+                </div>
+                <a name="topofpage"></a>
+                <p>The <a href="https://github.com/peterwillcn/rails4-autocomplete">Rails4-autocomplete gem</a> gem makes adding autocomplete to an input field a lot smoother, and there are some cool features you can add when using it for search. I'm going to go through the basics of adding autocomplete to a form field, and then I'll talk about using autocomplete in non-form-builder fields. At the end I'll share a tip for adding one-click search using the gem's event hooks. Note that this can be used for both Rails 3 and Rails 4.</p>
+
+<p>This is not the easiest gem to implement because it's so configurable, and <a href="https://github.com/crowdint/rails3-jquery-autocomplete-app">an entire gem</a> has been written to demonstrate the process, but honestly I found the explanations on the original readme much more helpful. I highly recommend reading it so that you can do all sorts of creative things with your implementation.</p>
+
+<p>To begin, install the gem and configure it using the <a href="https://github.com/peterwillcn/rails4-autocomplete#installing">appropriate instructions</a> for whichever rails version you have. </p>
+
+<h4 id="autocompleteaformfield">Autocomplete a Form Field</h4>
+
+<p>Suppose we want new users to tell us what country they are from in a form. We need to create a new <code>aucomplete_country_name</code> action on the controller, and configure it in the routes. The gem provides us with a class method for this:</p>
+
+<p>Controller:</p>
+
+<pre><code class="ruby">class UsersController &lt; ApplicationController  
+  autocomplete :country, :name
+</code></pre>
+
+<p>And in the routes:  </p>
+
+<pre><code class="ruby">resources :users do  
+  get :autcomplete_country_name, on: :collection
+end  
+</code></pre>
+
+<p>On our view, we would add the autocomplete attribute to the text field and supply the new path that we just created:  </p>
+
+<pre><code class="ruby">form_for @user do |f|  
+  f.autocomplete_field :country_name, autocomplete_country_name_users_path
+</code></pre>
+
+<h4 id="autocompleteasearchfield">Autocomplete a Search Field</h4>
+
+<p>I used autocomplete in a search box, so I had to do things a little bit differently in the <strong>view</strong> as I was not using the rails form builder. The gem provides an <code>autocomplete_field_tag</code> form helper for this use case, but you can also do it manually and just supply the autocomplete path in a data attribute (which is what the helper does behind the scenes). The helper syntax is as follows:  </p>
+
+<pre><code class="ruby">autocomplete_field_tag(name, value, source, options = {})  
+</code></pre>
+
+<p>As an example, I'll demonstrate how to use the helper, and how to do it manually using the previous user-country example.</p>
+
+<ol>
+<li>Using the helper tag:  </li>
+</ol>
+
+<pre><code class="ruby">&lt;%= autocomplete_field_tag :search, params[:search], autocomplete_country_name_users_path, {class: "search-query", placeholder: "United States", type: "search"} %&gt;  
+</code></pre>
+
+<ol>
+<li>Manually:  </li>
+</ol>
+
+<pre><code class="ruby">&lt;%= text_field_tag :search, params[:search], class: "search-query", placeholder: "United States", type: "search", data: {autocomplete: autocomplete_country_name_users_path} %&gt;  
+</code></pre>
+
+<h4 id="oneclicksearch">One-click Search</h4>
+
+<p>When adding this to a search box, my clients noticed that visitors needed to click twice to start the search - once to close the autocomplete list, and once to click 'Search'. This was easy to fix, since the gem gives you a number of events you can hook into (see documentation). I added an event hook that submitted the search button when the list was shut. Here's the code, using a <code>search-me</code> class that I added to the Search buton:</p>
+
+<pre><code class="javascript">$( document ).ready(function() {
+  $('.search-query').bind('railsAutocomplete.select', function(event, data {
+  $('.search-me').trigger('click')
+  });
+});
+</code></pre>
+            </section>
+            <footer class="post-footer">
+                <section class="share">
+                    <a class="icon-twitter" href="http://twitter.com/share?text=Autocomplete%20Magic%20with%20Rails&url=http://localhost:2368/autocomplete-magic-with-rails/"
+                        onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                        <span class="hidden">Twitter</span>
+                    </a>
+                    <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:2368/autocomplete-magic-with-rails/"
+                        onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                        <span class="hidden">Facebook</span>
+                    </a>
+                    <a class="icon-google-plus" href="https://plus.google.com/share?url=http://localhost:2368/autocomplete-magic-with-rails/"
+                       onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                        <span class="hidden">Google+</span>
+                    </a>
+                </section>
+            </footer>
+            <div class="bottom-teaser cf">
+                <div class="isLeft">
+                    <h5 class="index-headline featured"><span>Written by</span></h5>
+                    <section class="author">
+                        <div class="author-image" style="background-image: url(http://www.gravatar.com/avatar/2fd017fbcb4fcdf8f936ffeb9c4ca32f?d=404&amp;s=250)">Blog Logo</div>
+                        <h4><a href="../author/yoni/index.html">Yoni</a></h4>
+                        <p class="bio"></p>
+                        <hr>
+                        <p class="published">Published <time datetime="2014-10-02">02 Oct 2014</time></p>
+                    </section>
+                </div>
+                <div class="isRight">
+                    <h5 class="index-headline featured"><span>Supported by</span></h5>
+                    <footer class="site-footer">
+                        <section class="poweredby">Proudly published with <a class="icon-ghost" href="http://ghost.org"> Ghost</a></section>
+                        <a class="subscribe" href="http://localhost:2368/rss/"><span class="tooltip">You should subscribe to my RSS feed.</span></a>
+                        <div class="inner">
+                             <section class="copyright">All content copyright <a href="http://localhost:2368/">Yoni Weisbrod</a> &copy; 2014<br>All rights reserved.</section>
+
+                        </div>
+                    </footer>
+                </div>
+            </div>
+
+    </article>
+
+</main>
+
+<div class="bottom-closer">
+    <div class="background-closer-image" style="background-image: url(../content/images/2014/10/workshop-3-copy.jpg)">
+        Image
+    </div>
+    <div class="inner">
+        <h1 class="blog-title">Yoni Weisbrod</h1>
+        <h2 class="blog-description">Fresh Rails and AngularJS insights from the field</h2>
+        <a href="../index.html" class="btn">Back to Overview</a>
+    </div>
+</div>
+
+
+    <script src="../public/jquery.js?v=81cab6acca"></script>
+
+    <script type="text/javascript" src="../assets/js/jquery.fitvids.js?v=81cab6acca"></script>
+    <script type="text/javascript" src="../assets/js/index.js?v=81cab6acca"></script>
+    <script src="../assets/js/readingTime.min.js?v=81cab6acca"></script>
+    <script src="../assets/js/highlight.pack.js?v=81cab6acca"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    
+    <script>
+        
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    
+      ga('create', 'UA-55415255-1', 'yoniweisbrod.com'); 
+      ga('send', 'pageview');
+    
+    </script>
+
+</body>
+</html>

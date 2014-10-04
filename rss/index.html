@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Yoni Weisbrod]]></title><description><![CDATA[Fresh Rails and AngularJS insights from the field]]></description><link>http://localhost:2368/</link><generator>Ghost 0.5</generator><lastBuildDate>Sat, 04 Oct 2014 12:36:37 GMT</lastBuildDate><atom:link href="http://localhost:2368/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Autocomplete Magic with Rails]]></title><description><![CDATA[<p>The <a href="https://github.com/peterwillcn/rails4-autocomplete">Rails4-autocomplete gem</a> gem makes adding autocomplete to an input field a lot smoother, and there are some cool features you can add when using it for search. I'm going to go through the basics of adding autocomplete to a form field, and then I'll talk about using autocomplete in non-form-builder fields. At the end I'll share a tip for adding one-click search using the gem's event hooks. Note that this can be used for both Rails 3 and Rails 4.</p>
+
+<p>This is not the easiest gem to implement because it's so configurable, and <a href="https://github.com/crowdint/rails3-jquery-autocomplete-app">an entire gem</a> has been written to demonstrate the process, but honestly I found the explanations on the original readme much more helpful. I highly recommend reading it so that you can do all sorts of creative things with your implementation.</p>
+
+<p>To begin, install the gem and configure it using the <a href="https://github.com/peterwillcn/rails4-autocomplete#installing">appropriate instructions</a> for whichever rails version you have. </p>
+
+<h4 id="autocompleteaformfield">Autocomplete a Form Field</h4>
+
+<p>Suppose we want new users to tell us what country they are from in a form. We need to create a new <code>aucomplete_country_name</code> action on the controller, and configure it in the routes. The gem provides us with a class method for this:</p>
+
+<p>Controller:</p>
+
+<pre><code class="ruby">class UsersController &lt; ApplicationController  
+  autocomplete :country, :name
+</code></pre>
+
+<p>And in the routes:  </p>
+
+<pre><code class="ruby">resources :users do  
+  get :autcomplete_country_name, on: :collection
+end  
+</code></pre>
+
+<p>On our view, we would add the autocomplete attribute to the text field and supply the new path that we just created:  </p>
+
+<pre><code class="ruby">form_for @user do |f|  
+  f.autocomplete_field :country_name, autocomplete_country_name_users_path
+</code></pre>
+
+<h4 id="autocompleteasearchfield">Autocomplete a Search Field</h4>
+
+<p>I used autocomplete in a search box, so I had to do things a little bit differently in the <strong>view</strong> as I was not using the rails form builder. The gem provides an <code>autocomplete_field_tag</code> form helper for this use case, but you can also do it manually and just supply the autocomplete path in a data attribute (which is what the helper does behind the scenes). The helper syntax is as follows:  </p>
+
+<pre><code class="ruby">autocomplete_field_tag(name, value, source, options = {})  
+</code></pre>
+
+<p>As an example, I'll demonstrate how to use the helper, and how to do it manually using the previous user-country example.</p>
+
+<ol>
+<li>Using the helper tag:  </li>
+</ol>
+
+<pre><code class="ruby">&lt;%= autocomplete_field_tag :search, params[:search], autocomplete_country_name_users_path, {class: "search-query", placeholder: "United States", type: "search"} %&gt;  
+</code></pre>
+
+<ol>
+<li>Manually:  </li>
+</ol>
+
+<pre><code class="ruby">&lt;%= text_field_tag :search, params[:search], class: "search-query", placeholder: "United States", type: "search", data: {autocomplete: autocomplete_country_name_users_path} %&gt;  
+</code></pre>
+
+<h4 id="oneclicksearch">One-click Search</h4>
+
+<p>When adding this to a search box, my clients noticed that visitors needed to click twice to start the search - once to close the autocomplete list, and once to click 'Search'. This was easy to fix, since the gem gives you a number of events you can hook into (see documentation). I added an event hook that submitted the search button when the list was shut. Here's the code, using a <code>search-me</code> class that I added to the Search buton:</p>
+
+<pre><code class="javascript">$( document ).ready(function() {
+  $('.search-query').bind('railsAutocomplete.select', function(event, data {
+  $('.search-me').trigger('click')
+  });
+});
+</code></pre>]]></description><link>http://localhost:2368/autocomplete-magic-with-rails/</link><guid isPermaLink="false">9e7926e9-e95b-4080-aab7-df8e564e68cb</guid><category><![CDATA[rails]]></category><category><![CDATA[ autocomplete]]></category><dc:creator><![CDATA[Yoni]]></dc:creator><pubDate>Thu, 02 Oct 2014 09:00:00 GMT</pubDate></item><item><title><![CDATA[Baruco 2014 — Barcelona Ruby Conference]]></title><description><![CDATA[<p><img src="https://dl.dropboxusercontent.com/s/d6uk7jekszgz8e7/baruco_auditorium_cover.jpg?dl=0" alt="cover"></p>
+
+<p>I came back from the Barcelona Ruby Conference (2014) last week, and since then I’ve been reflecting on the experience. I want to share some insights I came away with, and some of the great times that I had there.</p>
+
+<p>The conference took place over Friday and Saturday at the modern AXA Auditorium, located in the Eixample district of Barcelona. I stayed in Gràcia, an amazing neighborhood with loads of cool bars, coffee shops, and great shops to browse. It’s outside the standard tourist areas (Rambla, Gotic, etc.), and definitely worth a visit.</p>
+
+<p>The organizers did a great job of creating a unique mood for the conference. From the amazing artwork of Silvia Brujas on the conference literature, paraphernalia, and the poster at the entrance to the conference (check out the Baruco website — <a href="http://www.baruco.org/">http://www.baruco.org/</a>), to the soundscapes that played between presentations that still give me the chills, the atmosphere was definitely stimulating.</p>
+
+<p>Over the course of the two days I met some amazing developers and heard lectures from some really interesting people. The lectures ranged from the more theoretical (Brian Shirai’s ‘Types as Premature Optimization’), to anecdotal (‘How I built my own Twitch-Plays-Pokémon’ by José Albornoz), to some really practical ones (Julian Cheal’s ‘Dancing with Robots’, where Julian controlled a drone using a Dance Dance Revolution mat. Highly recommended!) It was a good range of topics, although I didn’t enjoy all of the lectures.</p>
+
+<p>One lecture that did stand out for me was Erik Michaels-Ober’s ‘Writing Fast Ruby’, where he benchmarked a series of common ruby commands, finding faster ways of doing many every-day things (see his slide deck here). It was really a pleasure to watch — his slides were professionally illustrated, including heart-warming renderings of Don Knuth and Matz as a knowing turtle and a wise cat, and he’s just a great, upbeat guy to listen to. Check out his slides here (from <a href="https://speakerdeck.com/sferik/writing-fast-ruby">Speakerdeck.com</a>):</p>
+
+<p><script async class="speakerdeck-embed" data-id="585245d01ee1013238737e42b879906f" data-ratio="1.77777777777778" src="http://speakerdeck.com/assets/embed.js"></script><br></p>
+
+<p>What inspired me most in the conference was probably some career advice that I received from Pat Shaughnessy. As he has over 20 years of professional developing experience, I asked him for advice on moving forward as a developer, and he told me that a great way to become a stronger developer is to learn from others and work together with others — to not program in a bubble. This message really hit home when I discovered the astounding number of open-source gems that Erik Michaels-Ober actively maintains.</p>
+
+<p>It was also really great seeing the diversity that’s out there among developers. Leon Gersing (Github) gave an inspiring lecture on ‘Keeping Software Weird’, which was about staying true to yourself and breaking rules (see an older version here <a href="http://vimeo.com/54042336Overall">http://vimeo.com/54042336Overall</a>).</p>
+
+<p>Overall, it was really nice hanging out with people who do the same thing that you do, day in and day out, face the same issues, and share your passion. And it was great seeing how programmers had taken their skills and used them for all sorts of great things — like Europe’s code week, open-source projects, and just having fun building things. I didn’t find that I picked up too many new Ruby skills over the conference, but I did leave having met a lot of amazing people and feeling inspired.</p>]]></description><link>http://localhost:2368/baruco-2014-barcelona-ruby-conference/</link><guid isPermaLink="false">4e780e60-9631-45e3-87a3-335f0697d65f</guid><dc:creator><![CDATA[Yoni]]></dc:creator><pubDate>Thu, 18 Sep 2014 09:00:00 GMT</pubDate></item><item><title><![CDATA[Nested Attributes in ActiveAdmin for Rails 4]]></title><description><![CDATA[<p>There have recently been significant changes to ActiveAdmin, specifically moving from meta_search to ransack and unfortunately there is a dearth of documentation on the subject. You might have noticed that creating custom filters is done completely differently now, for instance.</p>
+
+<p>One of my newer projects uses Rails 4, so I get an opportunity to explore strong parameters in greater depth. This post explains how to implement nested attributes with ActiveAdmin in Rails 4, including deleting associated records.</p>
+
+<h4 id="thescenario">The scenario</h4>
+
+<p>A Video has many video-titles (another table), which serve as alternate titles for the video. A Title has video id, title, and primary (bool) fields.</p>
+
+<p>An admin can add and delete alternate titles to a Video from the Video form.</p>
+
+<h5 id="thesolution">The solution:</h5>
+
+<p>Three simple steps. First whitelist the relevant attributes in ActiveAdmin. Then use formtastic's simple <code>has_many</code> syntax to add the nested attributes to the form. Lastly, add the <code>accepts_nested_attributes_for</code> method in the model.</p>
+
+<h6 id="whitelisttherelevantattributes">Whitelist the relevant attributes</h6>
+
+<p>Whitelisting the (non-nested) model attributes is done like so:  </p>
+
+<pre><code class="ruby">ActiveAdmin.register Video do  
+    permit_params :description, :url, :author # etc
+</code></pre>
+
+<p>Any data sent through an ActiveAdmin form as a list requires whitelisting it in array form. That includes nested attributes and virtual attributes that take an array. For handling of nested attributes by ActiveAdmin, the attributes themselves must be included in the array declaration:</p>
+
+<pre><code class="ruby">permit_params :description, video_titles_attributes: [:id, :title, :primary, :_destroy]  
+</code></pre>
+
+<p>Note the inclusion of <code>:_destroy</code> – this allows associated records to be destroyed through the form itself.</p>
+
+<h6 id="addthenestedattributestotheform">Add the nested attributes to the form</h6>
+
+<p>Use the <em>formtastic</em> has many syntax to add the inputs to the form. Optional parameters are <code>new_record</code> (bool, defaults to true) and <code>allow_destroy</code> (bool, defaults to false).</p>
+
+<pre><code class="ruby">f.inputs "Details" dp  
+  f.input :url
+  f.has_many :video_titles, allow_destroy: true do |ff|
+    ff.input :title
+    ff.input :primary
+  end
+end  
+</code></pre>
+
+<h6 id="acceptnested_attributesinthemodel">Accept nested_attributes in the model</h6>
+
+<p>Remember to <code>allow_destroy</code> from nested forms:</p>
+
+<pre><code class="ruby">class Video &lt; ActiveRecord::Base  
+  accepts_nested_attributes_for :video_titles, allow_destroy: true
+</code></pre>
+
+<p>And that’s it! Feel free to post in the comments if you have any issues with the above.</p>]]></description><link>http://localhost:2368/nested-attributes-in-activeadmin-for-rails-4/</link><guid isPermaLink="false">cf80b5e4-0c68-476a-9028-f7df99c1ac8d</guid><dc:creator><![CDATA[Yoni]]></dc:creator><pubDate>Fri, 11 Jul 2014 09:00:00 GMT</pubDate></item></channel></rss>
